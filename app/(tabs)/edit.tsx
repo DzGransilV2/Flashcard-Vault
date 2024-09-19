@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Edit = () => {
   return (
-    <SafeAreaView>
+    <SafeAreaView className='h-full bg-primary'>
       <Text>Edit</Text>
     </SafeAreaView>
   )
