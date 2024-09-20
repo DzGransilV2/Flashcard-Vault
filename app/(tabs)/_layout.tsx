@@ -1,10 +1,12 @@
-import { View, Text, Image, ImageSourcePropType } from 'react-native'
-import React from 'react'
+import { View, Text, Image, ImageSourcePropType, Pressable } from 'react-native'
+import React, { useState } from 'react'
 import { Tabs } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { icons } from '@/constants'
 
 const TabsLayout = () => {
+
+  const [isFocused, setIsFocused] = useState(false);
 
   interface Props {
     icon: ImageSourcePropType,
@@ -31,7 +33,7 @@ const TabsLayout = () => {
         tabBarInactiveTintColor: '#124D87',
         tabBarStyle: {
           // '#001F3F' bg color of tab in hex code without opacity
-          backgroundColor: 'rgba(0, 31, 63, 0.5)', 
+          backgroundColor: 'rgba(0, 31, 63, 0.5)',
           borderTopWidth: 1,
           borderTopColor: '#124D87',
           borderLeftWidth: 1,
@@ -68,7 +70,9 @@ const TabsLayout = () => {
           title: "Create",
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <TabIcon icon={icons.create} color={color} />
+            <View className='h-[69px] w-[69px] rounded-full items-center justify-center bg-primary border-2 border-secondary focus:border-activeColor'>
+              <TabIcon icon={icons.create} color={color} />
+            </View>
           )
         }} />
         <Tabs.Screen name="edit" options={{

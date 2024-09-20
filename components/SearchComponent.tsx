@@ -26,7 +26,7 @@ const SearchComponent = () => {
             >
                 <Image
                     source={icons.search}
-                    className='h-9 w-9'
+                    className='h-7 w-7'
                     resizeMode='contain'
                 />
             </TouchableOpacity>
