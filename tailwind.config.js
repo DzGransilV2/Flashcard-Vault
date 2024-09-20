@@ -5,6 +5,9 @@ module.exports = {
     extend: {
       colors: {
         primary: "#121212",
+        secondary: "#124D87",
+        cardBg:"rgba(0, 31, 63, 0.5)",
+        activeColor:"#3086DB"
       }
     },
   },

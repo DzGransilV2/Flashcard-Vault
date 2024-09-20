@@ -6,7 +6,8 @@ export default {
     quiz: require('@/assets/icons/quiz.png'),
     create: require('@/assets/icons/create.png'),
     edit: require('@/assets/icons/edit.png'),
-    analytics: require('@/assets/icons/analytics.png')
+    analytics: require('@/assets/icons/analytics.png'),
+    search: require('@/assets/icons/search.png')
 }
 
 // export default {home, quiz}
