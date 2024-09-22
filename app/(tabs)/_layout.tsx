@@ -6,8 +6,6 @@ import { icons } from '@/constants'
 
 const TabsLayout = () => {
 
-  const [isFocused, setIsFocused] = useState(false);
-
   interface Props {
     icon: ImageSourcePropType,
     color: string
