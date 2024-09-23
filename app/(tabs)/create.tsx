@@ -1,7 +1,6 @@
-import { View, Text, ScrollView } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import SearchComponent from '@/components/SearchComponent'
 import FormField from '@/components/FormField'
 import DropDown from '@/components/DropDown'
 import RadioButtonGroup from '@/components/RadioButton'
@@ -13,7 +12,7 @@ const Create = () => {
 
   return (
     <SafeAreaView className='h-full bg-primary'>
-      <ScrollView className='h-full mx-[40px] gap-y-[50px]'>
+      <ScrollView className='h-full mx-[40px] gap-y-[5px]'>
         <View>
           <Text className='text-textColor mt-[30px] text-xl font-semibold'>Create Card</Text>
         </View>
@@ -57,6 +56,13 @@ const Create = () => {
                   </View>
                 </View>
               )}
+          </View>
+          <View>
+            <TouchableOpacity className='items-center justify-center' activeOpacity={0.7}>
+              <View className='bg-cardBg h-[50px] w-[130px] items-center justify-center border border-secondary rounded-[10px]'>
+                <Text className='text-secondary text-xl font-semibold'>Create</Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
