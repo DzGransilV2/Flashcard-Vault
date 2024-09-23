@@ -25,9 +25,9 @@ const ImagePickerCard = () => {
     <View className='items-center justify-center gap-3'>
       <TouchableOpacity
         onPress={pickImage}
-        className='bg-cardBg border border-secondary rounded-lg px-4 py-2 mt-4 mb-[10px] items-center justify-center'
+        className='bg-cardBg border border-secondary w-[330px] rounded-lg px-4 py-2 mt-4 mb-[10px] items-center justify-center'
       >
-        <Text className='text-secondary text-sm font-medium'>Choose Image for Category</Text>
+        <Text className='text-secondary text-sm font-medium'>Tap here to choose Image</Text>
       </TouchableOpacity>
       {image &&
         <>

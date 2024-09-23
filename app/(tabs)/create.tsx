@@ -44,7 +44,7 @@ const Create = () => {
               showCategory === 'exist' ? (
                 <DropDown />
               ) : (
-                <View className='gap-y-5'>
+                <View className='gap-y-[10px]'>
                   <View>
                     <FormField
                       fieldHeading="Category name"
@@ -52,6 +52,7 @@ const Create = () => {
                     />
                   </View>
                   <View>
+                    <Text className='text-textColor font-medium text-base mb-[10px]'>Category image</Text>
                     <ImagePickerCard />
                   </View>
                 </View>
