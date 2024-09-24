@@ -15,7 +15,12 @@ const data: DropdownItem[] = [
   { label: 'Math', value: '2' },
 ];
 
-const DropDown: React.FC = () => {
+
+interface DropDownProps {
+  handleChange: (text: string) => void;
+}
+
+const DropDown: React.FC<DropDownProps> = ({ handleChange }) => {
   const [value, setValue] = useState<string | null>(null); // Value can be null or string
   const [isFocus, setIsFocus] = useState<boolean>(false);  // Track focus state
 
@@ -30,9 +35,9 @@ const DropDown: React.FC = () => {
         containerStyle={{ backgroundColor: 'rgba(0, 31, 63, 0.5)', borderColor: '#3086DB', borderRadius: 10 }}
         itemTextStyle={{color:'#3086DB'}}
 
-        placeholderStyle={{ fontSize: 16, color: '#124D87' }}
-        selectedTextStyle={{ fontSize: 16, color: '#F4F0F0' }}
-        inputSearchStyle={{ fontSize: 16, height: 40, color: '#F4F0F0' }}
+        placeholderStyle={{ fontSize: 14, color: '#124D87' }}
+        selectedTextStyle={{ fontSize: 14, color: '#F4F0F0' }}
+        inputSearchStyle={{ fontSize: 14, height: 40, color: '#F4F0F0', borderColor: '#3086DB', borderRadius: 10 }}
         iconStyle={{ width: 20, height: 20 }}
         data={data}
         search
@@ -47,6 +52,9 @@ const DropDown: React.FC = () => {
         onChange={(item: DropdownItem) => {
           setValue(item.value);
           setIsFocus(false);
+          if (handleChange) {
+            handleChange(item.label);
+        }
         }}
         renderLeftIcon={() => (
           <AntDesign

@@ -2,9 +2,14 @@ import { View, Text, Button, Image, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import * as ImagePicker from 'expo-image-picker';
 
-const ImagePickerCard = () => {
 
-  const [image, setImage] = useState<string | null>(null);
+interface ImageProps {
+  setImageVerify: (text: string) => void;
+}
+
+const ImagePickerCard = ({setImageVerify}:ImageProps) => {
+
+  const [image, setImage] = useState<string>('');
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -18,6 +23,7 @@ const ImagePickerCard = () => {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      setImageVerify(result.assets[0].uri);
     }
   };
 

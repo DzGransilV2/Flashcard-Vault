@@ -1,15 +1,21 @@
 import { View, Text, TextInput } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 
 interface Props {
     fieldHeading: string,
-    placeholder: string
+    placeholder: string,
+    handleChange?: (text: string) => void;
 }
 
-const FormField = ({ fieldHeading, placeholder }: Props) => {
+const FormField = ({ fieldHeading, placeholder, handleChange }: Props) => {
 
-    const [value, setValue] = useState("")
+    const [value, setValue] = useState("");
+
+    // useEffect(() => {
+    //     console.log("Test", value);
+    // })
+
 
     return (
         <>
@@ -20,7 +26,12 @@ const FormField = ({ fieldHeading, placeholder }: Props) => {
                     placeholder={placeholder}
                     placeholderTextColor="#124D87"
                     className='text-sm font-normal text-white'
-                    onChangeText={(text) => setValue(text)}
+                    onChangeText={(text) => {
+                        setValue(text);
+                        if (handleChange) {
+                            handleChange(text);
+                        }
+                    }}
                 />
             </View>
         </>
