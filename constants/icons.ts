@@ -9,7 +9,9 @@ export default {
     analytics: require('@/assets/icons/analytics.png'),
     search: require('@/assets/icons/search.png'),
     delete: require('@/assets/icons/delete.png'),
-    editing: require('@/assets/icons/editing.png')
+    editing: require('@/assets/icons/editing.png'),
+    eye: require('@/assets/icons/eye.png'),
+    eyeHide: require('@/assets/icons/eye-hide.png')
 }
 
 // export default {home, quiz}

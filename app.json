@@ -29,25 +29,7 @@
     },
     "plugins": [
       "expo-router",
-      "expo-asset",
-      [
-        "expo-build-properties",
-        {
-          "ios": {
-            "extraPods": [
-              {
-                "name": "simdjson",
-                "configurations": [
-                  "Debug",
-                  "Release"
-                ],
-                "path": "../node_modules/@nozbe/simdjson",
-                "modular_headers": true
-              }
-            ]
-          }
-        }
-      ]
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true

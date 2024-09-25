@@ -5,6 +5,7 @@ import FormField from '@/components/FormField'
 import DropDown from '@/components/DropDown'
 import RadioButtonGroup from '@/components/RadioButton'
 import ImagePickerCard from '@/components/ImagePicker'
+import CustomBtn from '@/components/CustomBtn'
 
 const Create = () => {
 
@@ -17,7 +18,7 @@ const Create = () => {
   })
   const [imageVerify, setImageVerify] = useState<string>('');
 
-  
+
   useEffect(() => {
     console.log("Form", form);
     console.log("Image", imageVerify);
@@ -103,12 +104,13 @@ const Create = () => {
             </View>
             {
               form.category != '' && imageVerify != '' && (
-                <View>
-                  <TouchableOpacity className='items-center justify-center' activeOpacity={0.7}>
-                    <View className='bg-cardBg h-[50px] w-[130px] items-center justify-center border border-secondary rounded-[10px]'>
-                      <Text className='text-secondary text-xl font-semibold'>Create</Text>
-                    </View>
-                  </TouchableOpacity>
+                <View className='items-center justify-center'>
+                  <CustomBtn
+                    title="Create"
+                    // handlePress={() => router.push('/home')}
+                    containerStyle="w-[130px] h-[50px]"
+                    textStyles='text-xl'
+                  />
                 </View>
               )
             }
