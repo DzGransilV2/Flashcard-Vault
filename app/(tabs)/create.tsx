@@ -17,8 +17,10 @@ const Create = () => {
   })
   const [imageVerify, setImageVerify] = useState<string>('');
 
+  
   useEffect(() => {
     console.log("Form", form);
+    console.log("Image", imageVerify);
   })
 
 
