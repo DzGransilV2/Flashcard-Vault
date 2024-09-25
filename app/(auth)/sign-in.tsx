@@ -51,35 +51,17 @@ const SignIn = () => {
         <SafeAreaView className="bg-primary h-full">
             <ScrollView>
                 <View className="w-full min-h-[85vh] justify-center px-4 my-6">
-                    {/* <Image
-            source={images.logo}
-            className="w-[115px] h-[35px]"
-            resizeMode='contain'
-          /> */}
                     <Text className="text-2xl text-white mt-10 font-psemibold">Login to FlashCard Vault</Text>
                     <FormField
                         fieldHeading='Email'
                         placeholder='Type your email here...'
                         handleChange={handleEmailChange}
                     />
-                    {/* <FormField
-            fieldHeading="Email"
-            value={form.email}
-            handleChange={(e) => setForm({ ...form, email: e })}
-            otherStyles="mt-7"
-            keyboardType="email-address"
-          /> */}
                     <FormField
                         fieldHeading='Password'
                         placeholder='Type your password here...'
                         handleChange={handlePasswordChange}
                     />
-                    {/* <FormField
-            fieldHeading="Password"
-            value={form.password}
-            handleChange={(e) => setForm({ ...form, password: e })}
-            otherStyles="mt-7"
-          /> */}
                     <CustomBtn
                         title="Sign In"
                         handlePress={submit}
