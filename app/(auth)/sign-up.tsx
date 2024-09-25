@@ -6,6 +6,7 @@ import FormField from '../../components/FormField'
 // import CustomButton from '../../components/CustomButton'
 import { Link, router } from 'expo-router'
 import CustomBtn from '@/components/CustomBtn'
+import { useFirebase } from '@/context/firebase'
 // import { createUser } from '../../lib/appwrite'
 // import { useGlobalContext } from '../../context/GlobalProvider'
 
@@ -33,21 +34,26 @@ const SignUp = () => {
         setForm({ ...form, password: text });
     };
 
+    const {signUp} = useFirebase();
+
     const submit = async () => {
         if (!form.email || !form.password || !form.username) {
             Alert.alert('Error', 'Please fill in all the fields');
+            return
         }
-        // setIsSubmitting(true)
-        // try{
-        //   const result = await createUser(form.email, form.password, form.username);
+        setIsSubmitting(true)
+        try{
+          const result = await signUp({ email: form.email, password: form.password, username: form.username });
+          console.log("Signup success",result)
         //   setUser(result);
         //   setIsLoggedIn(true);
         //   router.replace('/home');
-        // }catch(error){
-        //   Alert.alert('Error', error.message);
-        // }finally{
-        //   setIsSubmitting(false)
-        // } 
+        }catch(error){
+          Alert.alert('Error', 'Got error in signUp but client side');
+          console.log("Error:", error)
+        }finally{
+          setIsSubmitting(false)
+        } 
     }
 
     return (
