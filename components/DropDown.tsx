@@ -13,9 +13,9 @@ interface DropDownProps {
 }
 
 interface Category {
-  category_id?: string; // Adjust type based on your actual data structure
-  categoryName: string; // Adjust type based on your actual data structure
-  categoryImage: string; // Optional property if it may not exist
+  category_id?: string; 
+  categoryName: string; 
+  categoryImage: string; 
 }
 
 const DropDown: React.FC<DropDownProps> = ({ handleChange, exitsImage }) => {

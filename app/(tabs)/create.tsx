@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import FormField from '@/components/FormField'
 import DropDown from '@/components/DropDown'
@@ -25,9 +25,9 @@ const Create = () => {
 
 
   useEffect(() => {
-    console.log("Form", form);
-    // console.log("Image", imageVerify);
-  })
+    console.log("Updated form:", form);
+  }, [form]);
+  
 
 
   const handleQuestionChange = (text: string) => {
@@ -42,21 +42,31 @@ const Create = () => {
     setForm({ ...form, keywords: text });
   };
 
-  const handleCategoryChange = (text: string) => {
-    setForm({ ...form, category: text });
-  };
+  const handleCategoryChange = useCallback((text: string) => {
+    setForm((prevForm) => (
+      { ...prevForm, category: text }
+    ));
+  }, []);
 
   const verifyImage = (text: string) => {
-    if(showCategory==='exist'){
-      setForm({ ...form, categoryImage: '' });
-    }else{
-      setForm({ ...form, categoryImage: text });
-    }
+    setForm((prevForm) => ({
+      ...prevForm,
+      categoryImage: text,
+      categoryImageExists: '',
+    }));
   };
+  
+  
 
   const exitsImage = (text: string) => {
-    setForm({ ...form, categoryImageExists: text });
+    setForm((prevForm) => ({
+      ...prevForm,
+      categoryImageExists: text, 
+      categoryImage: '', 
+    }));
   };
+  
+  
 
 
   const { addCard } = useFirebase();
@@ -135,7 +145,7 @@ const Create = () => {
                 )}
             </View>
             {
-              form.category != '' && form.categoryImage != '' && (
+              form.category && (form.categoryImage || form.categoryImageExists) && (
                 <View className='items-center justify-center'>
                   <CustomBtn
                     title="Create"

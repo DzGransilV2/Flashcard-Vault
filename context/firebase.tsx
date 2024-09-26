@@ -31,8 +31,8 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
 
     const [user, setUser] = useState("")
 
-    useEffect(()=>{
-        console.info("USER",user)
+    useEffect(() => {
+        console.info("USER", user)
     })
 
     const signUp = async ({ email, password, username }: signUpProps) => {
@@ -127,7 +127,7 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
         }
     };
 
-    const createCategory = async (categoryName: string, categoryImage: string, cardId: string, userId:string) => {
+    const createCategory = async (categoryName: string, categoryImage: string, cardId: string, userId: string) => {
         const docRef = await addDoc(collection(firestore, "categories"), {
             categoryName,
             categoryImage,
@@ -141,11 +141,12 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
 
     interface cardDataProps {
         form: {
-            question: string;
+            question: string,
             answer: string;
-            keywords: string;
-            categoryImage: string;
-            category: string;
+            keywords: string,
+            categoryImage: string,
+            category: string,
+            categoryImageExists: string
         };
         category_id?: string | null;
         answer_status_id?: string | null;
@@ -160,6 +161,7 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
             const keywords = cardData.form.keywords ?? null;
             const categoryName = cardData.form.category ?? null;
             const categoryImage = cardData.form.categoryImage ?? null;
+            const categoryImageExists = cardData.form.categoryImageExists ?? null;
             const category_id = cardData.category_id ?? null;
             const answer_status_id = cardData.answer_status_id ?? null;
             const userID = user;
@@ -178,12 +180,16 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
             });
             const card_id = docRef.id;
             await setDoc(doc(firestore, "cards", card_id), { card_id }, { merge: true });
-            const categoryUrl = await uploadCategoryImage(categoryImage);
-            if (categoryUrl) {
-                const resCategory = await createCategory(categoryName, categoryUrl, card_id, userID);
-                await setDoc(doc(firestore, "cards", card_id), { category_id:resCategory }, { merge: true });
+            if (categoryImageExists) {
+                // should update category here
             } else {
-                console.error("Category URL is undefined. Cannot create category.");
+                const categoryUrl = await uploadCategoryImage(categoryImage);
+                if (categoryUrl) {
+                    const resCategory = await createCategory(categoryName, categoryUrl, card_id, userID);
+                    await setDoc(doc(firestore, "cards", card_id), { category_id: resCategory }, { merge: true });
+                } else {
+                    console.error("Category URL is undefined. Cannot create category.");
+                }
             }
             console.log("Card document written with ID: ", card_id);
             return card_id;
@@ -193,29 +199,29 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
     };
 
     interface Category {
-        id: string; 
+        id: string;
         categoryName: string;
         categoryImage: string;
         cardId: string;
         userId: string;
     }
-    
+
 
     const fetchCategoriesByUserId = async (userId: string): Promise<Category[]> => {
         try {
             const categoriesRef = collection(firestore, "categories");
-            
+
             const q = query(categoriesRef, where("userId", "==", userId));
-    
+
             const querySnapshot = await getDocs(q);
-    
+
             const categories: Category[] = [];
-    
+
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
                 categories.push({ id: doc.id, ...data } as Category);
             });
-    
+
             return categories;
         } catch (error) {
             console.error("Error fetching categories: ", error);

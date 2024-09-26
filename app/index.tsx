@@ -2,6 +2,7 @@ import { ScrollView, Text, View, Image, TouchableOpacity } from 'react-native';
 import { Redirect, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomBtn from '@/components/CustomBtn';
+import { StatusBar } from 'expo-status-bar';
 // import { useGlobalContext } from '../context/GlobalProvider';
 
 export default function App() {
@@ -25,6 +26,10 @@ export default function App() {
                     />
                 </View>
             </ScrollView>
+            <StatusBar
+          backgroundColor='#121212'
+          style='light'
+        />
         </SafeAreaView>
     );
 }
