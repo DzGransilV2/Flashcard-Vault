@@ -1,29 +1,55 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { styled } from 'nativewind';
+import { useFirebase } from '@/context/firebase';
 
-// Define types for dropdown items
-interface DropdownItem {
-  label: string;
-  value: string;
-}
-
-const data: DropdownItem[] = [
-  { label: 'Japanese', value: '1' },
-  { label: 'Math', value: '2' },
-];
 
 
 interface DropDownProps {
   handleChange: (text: string) => void;
+  exitsImage:(text: string) => void;
 }
 
-const DropDown: React.FC<DropDownProps> = ({ handleChange }) => {
-  const [value, setValue] = useState<string | null>(null); // Value can be null or string
+interface Category {
+  category_id?: string; // Adjust type based on your actual data structure
+  categoryName: string; // Adjust type based on your actual data structure
+  categoryImage: string; // Optional property if it may not exist
+}
+
+const DropDown: React.FC<DropDownProps> = ({ handleChange, exitsImage }) => {
+  const [value, setValue] = useState<string>(''); // Value can be null or string
   const [isFocus, setIsFocus] = useState<boolean>(false);  // Track focus state
 
+  const { fetchCategoriesByUserId, user } = useFirebase();
+  const [data, setData] = useState<DropdownItem[]>([]);
+
+  const fetchCategories = async () => {
+    if (user) {
+      const categories = await fetchCategoriesByUserId(user);
+      const dropdownData = categories.map((category: Category) => ({
+        label: category.categoryName,
+        value: category.categoryImage,
+    }));
+      setData(dropdownData); // Update state with the fetched data
+  }
+  };
+
+  useEffect(() => {
+      fetchCategories();
+  }, [user]);
+
+
+  interface DropdownItem {
+    label: string;
+    value: string;
+  }
+
+  // const data: DropdownItem[] = [
+  //   { label: 'Japanese', value: '1' },
+  //   { label: 'Math', value: '2' },
+  // ];
 
   return (
     <View className="bg-cardBg rounded-[10px] ">
@@ -33,7 +59,7 @@ const DropDown: React.FC<DropDownProps> = ({ handleChange }) => {
           { height: 48, borderColor: isFocus ? '#3086DB' : '#124D87', borderWidth: 1, borderRadius: 10, paddingHorizontal: 8 }
         ]}
         containerStyle={{ backgroundColor: 'rgba(0, 31, 63, 0.5)', borderColor: '#3086DB', borderRadius: 10 }}
-        itemTextStyle={{color:'#3086DB'}}
+        itemTextStyle={{ color: '#3086DB' }}
 
         placeholderStyle={{ fontSize: 14, color: '#124D87' }}
         selectedTextStyle={{ fontSize: 14, color: '#F4F0F0' }}
@@ -54,19 +80,22 @@ const DropDown: React.FC<DropDownProps> = ({ handleChange }) => {
           setIsFocus(false);
           if (handleChange) {
             handleChange(item.label);
-        }
+          }
+          if(exitsImage){
+            exitsImage(item.value);
+          }
         }}
         renderLeftIcon={() => (
           <AntDesign
-            style={{ marginLeft:20,  marginRight: 10 }}
+            style={{ marginLeft: 20, marginRight: 10 }}
             color={isFocus ? '#3086DB' : '#124D87'}
             name="folder1"
             size={20}
           />
         )}
-        renderRightIcon={()=>(
+        renderRightIcon={() => (
           <AntDesign
-          style={{ marginRight: 20 }}
+            style={{ marginRight: 20 }}
             color={isFocus ? '#3086DB' : '#124D87'}
             name="down"
             size={15}

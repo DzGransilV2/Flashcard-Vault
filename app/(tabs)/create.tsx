@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import FormField from '@/components/FormField'
@@ -6,6 +6,8 @@ import DropDown from '@/components/DropDown'
 import RadioButtonGroup from '@/components/RadioButton'
 import ImagePickerCard from '@/components/ImagePicker'
 import CustomBtn from '@/components/CustomBtn'
+import { useFirebase } from '@/context/firebase'
+import { router } from 'expo-router'
 
 const Create = () => {
 
@@ -14,14 +16,17 @@ const Create = () => {
     question: '',
     answer: '',
     keywords: '',
-    category: ''
+    category: '',
+    categoryImage: '',
+    categoryImageExists:''
   })
-  const [imageVerify, setImageVerify] = useState<string>('');
+  // const [imageVerify, setImageVerify] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
 
   useEffect(() => {
     console.log("Form", form);
-    console.log("Image", imageVerify);
+    // console.log("Image", imageVerify);
   })
 
 
@@ -42,9 +47,35 @@ const Create = () => {
   };
 
   const verifyImage = (text: string) => {
-    setImageVerify(text);
+    if(showCategory==='exist'){
+      setForm({ ...form, categoryImage: '' });
+    }else{
+      setForm({ ...form, categoryImage: text });
+    }
   };
 
+  const exitsImage = (text: string) => {
+    setForm({ ...form, categoryImageExists: text });
+  };
+
+
+  const { addCard } = useFirebase();
+
+  const submit = async () => {
+
+
+    setIsSubmitting(true)
+    try {
+      const result = await addCard({ form });
+      router.replace('/(tabs)/');
+      Alert.alert("Success", "Upload successful");
+    } catch (error) {
+      Alert.alert('Error', 'Got error in signIn but client side');
+      console.log("Error:", error)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <SafeAreaView className='h-full bg-primary'>
@@ -85,6 +116,7 @@ const Create = () => {
                 showCategory === 'exist' ? (
                   <DropDown
                     handleChange={handleCategoryChange}
+                    exitsImage={exitsImage}
                   />
                 ) : (
                   <View className='gap-y-[10px]'>
@@ -103,11 +135,11 @@ const Create = () => {
                 )}
             </View>
             {
-              form.category != '' && imageVerify != '' && (
+              form.category != '' && form.categoryImage != '' && (
                 <View className='items-center justify-center'>
                   <CustomBtn
                     title="Create"
-                    // handlePress={() => router.push('/home')}
+                    handlePress={submit}
                     containerStyle="w-[130px] h-[50px]"
                     textStyles='text-xl'
                   />
