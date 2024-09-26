@@ -71,8 +71,22 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
         }
     };
 
+    const signIn = async ({ email, password }: signUpProps) => {
+        if (email && password) {
+            try {
+                const response = await auth().signInWithEmailAndPassword(email, password);
+                return response;
+            } catch (error) {
+                Alert.alert('Sign In Error', 'An error occurred during sign in.');
+                console.log("Sign In error:", error); // Log the error for debugging
+            }
+        } else {
+            console.error("Email and password must be provided."); // Ensure email and password are valid
+        }
+    };
+
     return (
-        <FirebaseContext.Provider value={{ signUp }}>
+        <FirebaseContext.Provider value={{ signUp, signIn }}>
             {children}
         </FirebaseContext.Provider>
     );

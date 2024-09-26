@@ -47,7 +47,8 @@ const SignUp = () => {
           console.log("Signup success",result.user.displayName)
         //   setUser(result);
         //   setIsLoggedIn(true);
-        //   router.replace('/home');
+          router.replace('/sign-in');
+          Alert.alert("Success", "Signned up successfully");
         }catch(error){
           Alert.alert('Error', 'Got error in signUp but client side');
           console.log("Error:", error)

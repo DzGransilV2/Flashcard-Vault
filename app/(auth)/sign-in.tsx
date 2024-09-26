@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import FormField from '../../components/FormField'
 import { Link, router } from 'expo-router'
 import CustomBtn from '@/components/CustomBtn'
+import { useFirebase } from '@/context/firebase'
 
 const SignIn = () => {
 
@@ -15,33 +16,37 @@ const SignIn = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     //   const {setUser, setIsLoggedIn} = useGlobalContext();
 
+    const { signIn } = useFirebase();
+
     const submit = async () => {
         if (!form.email || !form.password) {
             Alert.alert('Error', 'Please fill in all the fields');
+            return
         }
-        // setIsSubmitting(true)
-        // try{
-        //   await signIn(form.email, form.password);
-        //   const result = await getCurrrentUser();
-        //   setUser(result);
-        //   setIsLoggedIn(true);
-        //   Alert.alert('Success', 'User signed in successfully');
-        //   router.replace('/home');
-        // }catch(error){
-        //   Alert.alert('Error', error.message);
-        // }finally{
-        //   setIsSubmitting(false)
-        // } 
+        setIsSubmitting(true)
+        try {
+            const result = await signIn({ email: form.email, password: form.password });
+            console.log("SignIn success", result.user.displayName)
+            //   setUser(result);
+            //   setIsLoggedIn(true);
+            router.replace('/(tabs)/');
+            Alert.alert("Success", "Sign In successful");
+        } catch (error) {
+            Alert.alert('Error', 'Got error in signIn but client side');
+            console.log("Error:", error)
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     const handleEmailChange = (text: string) => {
         setForm({ ...form, email: text });
-      };
+    };
 
     const handlePasswordChange = (text: string) => {
         setForm({ ...form, password: text });
-      };
-      
+    };
+
 
     return (
         <SafeAreaView className="bg-primary h-full">
