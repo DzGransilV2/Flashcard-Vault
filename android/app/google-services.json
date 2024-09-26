@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "36549535399",
+    "project_id": "flashcard-vault",
+    "storage_bucket": "flashcard-vault.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:36549535399:android:26992a927fc2ba70f6dd82",
+        "android_client_info": {
+          "package_name": "com.dzgransil.flashcardvault"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwju9gzU3LwilVnIGPOaNDWY6hwVfAFf0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

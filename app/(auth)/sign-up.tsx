@@ -44,7 +44,7 @@ const SignUp = () => {
         setIsSubmitting(true)
         try{
           const result = await signUp({ email: form.email, password: form.password, username: form.username });
-          console.log("Signup success",result)
+          console.log("Signup success",result.user.displayName)
         //   setUser(result);
         //   setIsLoggedIn(true);
         //   router.replace('/home');
