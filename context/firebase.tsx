@@ -5,6 +5,7 @@ import storage, { uploadBytesResumable } from '@react-native-firebase/storage';
 import { addDoc, collection, getFirestore, setDoc, doc, query, where, getDocs, updateDoc, arrayUnion } from '@react-native-firebase/firestore'
 import { Alert } from "react-native";
 // import { nanoid } from 'nanoid';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type FirebaseContextType = any;
 
@@ -82,7 +83,9 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
         if (email && password) {
             try {
                 const response = await auth().signInWithEmailAndPassword(email, password);
-                setUser(response.user.uid)
+                // setUser(response.user.uid)
+                // await AsyncStorage.removeItem('userData');
+                await AsyncStorage.setItem('userData', JSON.stringify({ userId: response.user.uid, userName: response.user.displayName, userEmail: response.user.email }));
                 return response;
             } catch (error) {
                 Alert.alert('Sign In Error', 'An error occurred during sign in.');
@@ -178,7 +181,7 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
                     question,
                     answer,
                     keywords,
-                    category_id:category_id_exists,
+                    category_id: category_id_exists,
                     answer_status_id,
                     userID,
                 });
@@ -225,7 +228,7 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
         categoryName: string;
         categoryImage: string;
         // cardId: string;
-        card_id:string[];
+        card_id: string[];
         userId: string;
     }
 
@@ -233,19 +236,19 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
     const fetchCategoriesByUserId = async (userId: string): Promise<Category[]> => {
         try {
             const categoriesRef = collection(firestore, "categories");
-    
+
             const q = query(categoriesRef, where("userId", "==", userId));
-    
+
             const querySnapshot = await getDocs(q);
-    
+
             const categories: Category[] = [];
-    
+
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
-    
+
                 // Ensure the card_id is treated as an array (empty if not present)
                 const card_id = data.card_id ?? [];
-    
+
                 categories.push({
                     id: doc.id,
                     category_id: data.category_id,
@@ -255,17 +258,17 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
                     userId: data.userId,
                 } as Category);
             });
-    
+
             return categories;
         } catch (error) {
             console.error("Error fetching categories: ", error);
             return [];
         }
     };
-    
+
 
     return (
-        <FirebaseContext.Provider value={{ signUp, signIn, addCard, fetchCategoriesByUserId, user }}>
+        <FirebaseContext.Provider value={{ signUp, signIn, addCard, fetchCategoriesByUserId, user, setUser }}>
             {children}
         </FirebaseContext.Provider>
     );

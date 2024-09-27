@@ -8,7 +8,7 @@ interface Props{
 
 const CategoryCard = ({category_image, category_name}:Props) => {
     return (
-        <View className='bg-cardBg h-[150px] w-[150px] items-center justify-center border-[1px] border-secondary rounded-[10px]'>
+        <View className='bg-cardBg h-[150px] w-[150px] items-center justify-center border-[1px] mb-5 border-secondary rounded-[10px]'>
             <Image 
                 className='bg-white h-[50px] w-[50px] rounded-[10px]'
                 source={{uri:category_image}}

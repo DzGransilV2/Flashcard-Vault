@@ -3,15 +3,34 @@ import { Redirect, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomBtn from '@/components/CustomBtn';
 import { StatusBar } from 'expo-status-bar';
-// import { useGlobalContext } from '../context/GlobalProvider';
+import { useFirebase } from '@/context/firebase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from 'react';
 
 export default function App() {
 
-    //   const {isLoading, isLoggedIn} = useGlobalContext();
+    const { user, setUser } = useFirebase();
 
-    //   if(!isLoading && isLoggedIn){
-    //     return <Redirect href="/home"/>
-    //   }
+    const [redirect, setRedirect]=useState(false);
+
+    const redirectLoggedIn = async () => {
+        const userData: string | null = await AsyncStorage.getItem('userData');
+        if (userData !== null) {
+            const userD = JSON.parse(userData);
+            if(userD.userId){
+                setUser(userD.userId);
+                setRedirect(!redirect);
+            }
+        }
+    }
+
+    useEffect(()=>{
+        redirectLoggedIn();
+    }, [user])
+
+    if (redirect) {
+        return <Redirect href="/(tabs)/" />
+    }
 
 
     return (
@@ -27,9 +46,9 @@ export default function App() {
                 </View>
             </ScrollView>
             <StatusBar
-          backgroundColor='#121212'
-          style='light'
-        />
+                backgroundColor='#121212'
+                style='light'
+            />
         </SafeAreaView>
     );
 }
