@@ -16,6 +16,7 @@ const Create = () => {
     question: '',
     answer: '',
     keywords: '',
+    category_id_exists: '',
     category: '',
     categoryImage: '',
     categoryImageExists:''
@@ -65,6 +66,13 @@ const Create = () => {
       categoryImage: '', 
     }));
   };
+
+  const handleCategoryIDChange = (text: string) => {
+    setForm((prevForm) => ({
+      ...prevForm,
+      category_id_exists: text
+    }));
+  }
   
   
 
@@ -72,13 +80,23 @@ const Create = () => {
   const { addCard } = useFirebase();
 
   const submit = async () => {
-
-
+    if (!form.answer || !form.question || !form.keywords || !form.category) {
+      Alert.alert('Error', 'Please fill in all the fields');
+      return
+  }
     setIsSubmitting(true)
     try {
       const result = await addCard({ form });
       router.replace('/(tabs)/');
       Alert.alert("Success", "Upload successful");
+      setForm({...form, 
+        question: '',
+        answer: '',
+        keywords: '',
+        category_id_exists: '',
+        category: '',
+        categoryImage: '',
+        categoryImageExists:'' })
     } catch (error) {
       Alert.alert('Error', 'Got error in signIn but client side');
       console.log("Error:", error)
@@ -101,6 +119,7 @@ const Create = () => {
                 fieldHeading="Question"
                 placeholder="Type question here...."
                 handleChange={handleQuestionChange}
+                value={form.question}
               />
             </View>
             <View>
@@ -108,6 +127,7 @@ const Create = () => {
                 fieldHeading="Answer"
                 placeholder="Type answer here...."
                 handleChange={handleAnswerChange}
+                value={form.answer}
               />
             </View>
             <View>
@@ -115,6 +135,7 @@ const Create = () => {
                 fieldHeading="Main Keywords"
                 placeholder="Example: kono, sono etc"
                 handleChange={handleKeywordsChange}
+                value={form.keywords}
               />
             </View>
             <View>
@@ -127,6 +148,7 @@ const Create = () => {
                   <DropDown
                     handleChange={handleCategoryChange}
                     exitsImage={exitsImage}
+                    category_id_exists={handleCategoryIDChange}
                   />
                 ) : (
                   <View className='gap-y-[10px]'>
@@ -135,6 +157,7 @@ const Create = () => {
                         fieldHeading="Category name"
                         placeholder="Type category name here.."
                         handleChange={handleCategoryChange}
+                        value={form.category}
                       />
                     </View>
                     <View>
@@ -152,6 +175,7 @@ const Create = () => {
                     handlePress={submit}
                     containerStyle="w-[130px] h-[50px]"
                     textStyles='text-xl'
+                    isLoading={isSubmitting}
                   />
                 </View>
               )

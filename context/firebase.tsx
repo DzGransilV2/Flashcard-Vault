@@ -2,7 +2,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import auth, { updateProfile } from '@react-native-firebase/auth'
 import { ref } from '@react-native-firebase/database'
 import storage, { uploadBytesResumable } from '@react-native-firebase/storage';
-import { addDoc, collection, getFirestore, setDoc, doc, query, where, getDocs } from '@react-native-firebase/firestore'
+import { addDoc, collection, getFirestore, setDoc, doc, query, where, getDocs, updateDoc, arrayUnion } from '@react-native-firebase/firestore'
 import { Alert } from "react-native";
 // import { nanoid } from 'nanoid';
 
@@ -127,12 +127,13 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
         }
     };
 
-    const createCategory = async (categoryName: string, categoryImage: string, cardId: string, userId: string) => {
+    const createCategory = async (categoryName: string, categoryImage: string, userID: string) => {
         const docRef = await addDoc(collection(firestore, "categories"), {
             categoryName,
             categoryImage,
-            cardId,
-            userId
+            // cardId,
+            userId: userID,
+            card_id: [],
         });
         const category_id = docRef.id;
         await setDoc(doc(firestore, "categories", category_id), { category_id }, { merge: true });
@@ -144,6 +145,7 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
             question: string,
             answer: string;
             keywords: string,
+            category_id_exists: string,
             categoryImage: string,
             category: string,
             categoryImageExists: string
@@ -163,6 +165,7 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
             const categoryImage = cardData.form.categoryImage ?? null;
             const categoryImageExists = cardData.form.categoryImageExists ?? null;
             const category_id = cardData.category_id ?? null;
+            const category_id_exists = cardData.form.category_id_exists ?? null;
             const answer_status_id = cardData.answer_status_id ?? null;
             const userID = user;
 
@@ -170,29 +173,48 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
                 console.error("Required fields are missing");
                 return;
             }
-            const docRef = await addDoc(collection(firestore, "cards"), {
-                question,
-                answer,
-                keywords,
-                category_id,
-                answer_status_id,
-                userID,
-            });
-            const card_id = docRef.id;
-            await setDoc(doc(firestore, "cards", card_id), { card_id }, { merge: true });
             if (categoryImageExists) {
-                // should update category here
+                const docRef = await addDoc(collection(firestore, "cards"), {
+                    question,
+                    answer,
+                    keywords,
+                    category_id:category_id_exists,
+                    answer_status_id,
+                    userID,
+                });
+                const card_id = docRef.id;
+                await setDoc(doc(firestore, "cards", card_id), { card_id }, { merge: true });
+
+                await updateDoc(doc(firestore, "categories", category_id_exists), {
+                    card_id: arrayUnion(card_id),
+                });
+
             } else {
+                const docRef = await addDoc(collection(firestore, "cards"), {
+                    question,
+                    answer,
+                    keywords,
+                    category_id,
+                    answer_status_id,
+                    userID,
+                });
+                const card_id = docRef.id;
+                await setDoc(doc(firestore, "cards", card_id), { card_id }, { merge: true });
                 const categoryUrl = await uploadCategoryImage(categoryImage);
                 if (categoryUrl) {
-                    const resCategory = await createCategory(categoryName, categoryUrl, card_id, userID);
+                    const resCategory = await createCategory(categoryName, categoryUrl, userID);
+
+                    await setDoc(doc(firestore, "categories", resCategory), {
+                        card_id: arrayUnion(card_id),
+                    }, { merge: true });
+
                     await setDoc(doc(firestore, "cards", card_id), { category_id: resCategory }, { merge: true });
                 } else {
                     console.error("Category URL is undefined. Cannot create category.");
                 }
+                console.log("Card document written with ID: ", card_id);
+                return card_id;
             }
-            console.log("Card document written with ID: ", card_id);
-            return card_id;
         } catch (e) {
             console.error("Error adding card: ", e);
         }
@@ -202,7 +224,8 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
         id: string;
         categoryName: string;
         categoryImage: string;
-        cardId: string;
+        // cardId: string;
+        card_id:string[];
         userId: string;
     }
 
@@ -210,24 +233,36 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
     const fetchCategoriesByUserId = async (userId: string): Promise<Category[]> => {
         try {
             const categoriesRef = collection(firestore, "categories");
-
+    
             const q = query(categoriesRef, where("userId", "==", userId));
-
+    
             const querySnapshot = await getDocs(q);
-
+    
             const categories: Category[] = [];
-
+    
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
-                categories.push({ id: doc.id, ...data } as Category);
+    
+                // Ensure the card_id is treated as an array (empty if not present)
+                const card_id = data.card_id ?? [];
+    
+                categories.push({
+                    id: doc.id,
+                    category_id: data.category_id,
+                    categoryName: data.categoryName,
+                    categoryImage: data.categoryImage,
+                    card_id: Array.isArray(card_id) ? card_id : [], // Ensure it's an array
+                    userId: data.userId,
+                } as Category);
             });
-
+    
             return categories;
         } catch (error) {
             console.error("Error fetching categories: ", error);
             return [];
         }
     };
+    
 
     return (
         <FirebaseContext.Provider value={{ signUp, signIn, addCard, fetchCategoriesByUserId, user }}>

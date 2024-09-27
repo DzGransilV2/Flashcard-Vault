@@ -6,11 +6,12 @@ interface Props {
     fieldHeading: string,
     placeholder: string,
     handleChange?: (text: string) => void;
+    value?:string;
 }
 
-const FormField = ({ fieldHeading, placeholder, handleChange }: Props) => {
+const FormField = ({ fieldHeading, placeholder, handleChange, value }: Props) => {
 
-    const [value, setValue] = useState("");
+    // const [value, setValue] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
     // useEffect(() => {
@@ -28,7 +29,7 @@ const FormField = ({ fieldHeading, placeholder, handleChange }: Props) => {
                     placeholderTextColor="#124D87"
                     className='flex-1 text-sm font-normal text-textColor'
                     onChangeText={(text) => {
-                        setValue(text);
+                        // setValue(text);
                         if (handleChange) {
                             handleChange(text);
                         }

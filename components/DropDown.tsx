@@ -9,35 +9,37 @@ import { useFirebase } from '@/context/firebase';
 
 interface DropDownProps {
   handleChange: (text: string) => void;
-  exitsImage:(text: string) => void;
+  exitsImage: (text: string) => void;
+  category_id_exists: (text: string) => void;
 }
 
 interface Category {
-  category_id?: string; 
-  categoryName: string; 
-  categoryImage: string; 
+  category_id: string;
+  categoryName: string;
+  categoryImage: string;
 }
 
-const DropDown: React.FC<DropDownProps> = ({ handleChange, exitsImage }) => {
+const DropDown: React.FC<DropDownProps> = ({ handleChange, exitsImage, category_id_exists }) => {
   const [value, setValue] = useState<string>(''); // Value can be null or string
   const [isFocus, setIsFocus] = useState<boolean>(false);  // Track focus state
 
   const { fetchCategoriesByUserId, user } = useFirebase();
   const [data, setData] = useState<DropdownItem[]>([]);
 
+
   const fetchCategories = async () => {
     if (user) {
       const categories = await fetchCategoriesByUserId(user);
       const dropdownData = categories.map((category: Category) => ({
         label: category.categoryName,
-        value: category.categoryImage,
-    }));
-      setData(dropdownData); // Update state with the fetched data
-  }
+        value: [category.category_id, category.categoryImage]
+      }));
+      setData(dropdownData);
+    }
   };
 
   useEffect(() => {
-      fetchCategories();
+    fetchCategories();
   }, [user]);
 
 
@@ -81,8 +83,11 @@ const DropDown: React.FC<DropDownProps> = ({ handleChange, exitsImage }) => {
           if (handleChange) {
             handleChange(item.label);
           }
-          if(exitsImage){
-            exitsImage(item.value);
+          if (exitsImage) {
+            exitsImage(item.value[1]);
+          }
+          if (category_id_exists) {
+            category_id_exists(item.value[0]);
           }
         }}
         renderLeftIcon={() => (
