@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity, TouchableWithoutFeedback, Animated, StyleSheet, Alert, ActivityIndicator } from 'react-native'
+import { View, Text, Image, TouchableOpacity, TouchableWithoutFeedback, Animated, StyleSheet, Alert, ActivityIndicator, RefreshControl, ScrollView } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,11 +11,13 @@ const Flashcard = () => {
 
   // console.log(id)
 
-  const { user, fetchCategoryCards } = useFirebase();
+  const { user, fetchCategoryCards, updateCardStatus } = useFirebase();
 
   const [data, setData] = useState<Card[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
+
+  const [cardStatus, setCardStatus] = useState("");
 
   const [isFlipped, setIsFlipped] = useState(false); // To track the flip state
   const animatedValue = useRef(new Animated.Value(0)).current; // Animated value for flipping
@@ -54,12 +56,13 @@ const Flashcard = () => {
     // Reset flip state and animated value
     setIsFlipped(false);
     animatedValue.setValue(0);
+
   }, [currentCardIndex]);
 
   interface Card {
     id: string;
     answer: string;
-    answer_status_id: string;
+    card_status: string;
     card_id: string;
     category_id: string;
     keywords: string;
@@ -74,7 +77,7 @@ const Flashcard = () => {
       const cardData = response.map((card: Card) => ({
         question: card.question,
         answer: card.answer,
-        answer_status_id: card.answer_status_id,
+        card_status: card.card_status,
         card_id: card.card_id,
         category_id: card.category_id,
         keywords: card.keywords,
@@ -110,10 +113,32 @@ const Flashcard = () => {
 
   const currentCard = data[currentCardIndex];
 
+  const updateStatus = async (card_id: string, card_status: string) => {
+    if (card_id && card_status) {
+      const response = await updateCardStatus({ card_id, card_status });
+      Alert.alert("Card Status", response);
+    } else {
+      console.error("Card ID or Status is missing Client");
+    }
+  }
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
+  }
 
   return (
     <SafeAreaView className='bg-primary h-full'>
-      <View className='h-full mx-[40px]'>
+      <ScrollView
+        className='h-full mx-[40px]'
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        {/* <View className='h-full mx-[40px]'> */}
         <View className='items-center justify-center mt-[100px]'>
           <Text className='text-textColor font-semibold text-xl'>{category_name}</Text>
         </View>
@@ -145,13 +170,22 @@ const Flashcard = () => {
                 </View>
               )}
               <View className='flex flex-row w-[330px] h-[50px] items-center justify-evenly bg-cardBg rounded-[10px] border border-secondary mb-[10px]'>
-                <TouchableOpacity className='w-[75px] h-[26px] bg-redBg rounded-[10px] items-center justify-center' activeOpacity={0.7}>
+                <TouchableOpacity
+                  onPress={() => updateStatus(currentCard.card_id, 'bad')}
+                  className={`w-[75px] h-[26px] ${currentCard.card_status === 'bad' ? 'bg-redBrightBg' : 'bg-redBg'}  rounded-[10px] items-center justify-center`}
+                  activeOpacity={0.7}>
                   <Text className='text-textColor font-medium text-xs'>Bad</Text>
                 </TouchableOpacity>
-                <TouchableOpacity className='w-[75px] h-[26px] bg-yellowBg rounded-[10px] items-center justify-center' activeOpacity={0.7}>
+                <TouchableOpacity
+                  onPress={() => updateStatus(currentCard.card_id, 'ok')}
+                  className={`w-[75px] h-[26px] ${currentCard.card_status === 'ok' ? 'bg-yellowBrightBg' : 'bg-yellowBg'}  rounded-[10px] items-center justify-center`}
+                  activeOpacity={0.7}>
                   <Text className='text-textColor font-medium text-xs'>Ok</Text>
                 </TouchableOpacity>
-                <TouchableOpacity className='w-[75px] h-[26px] bg-greenBg rounded-[10px] items-center justify-center' activeOpacity={0.7}>
+                <TouchableOpacity
+                  onPress={() => updateStatus(currentCard.card_id, 'good')}
+                  className={`w-[75px] h-[26px] ${currentCard.card_status === 'good' ? 'bg-greenBrightBg' : 'bg-greenBg'}  rounded-[10px] items-center justify-center`}
+                  activeOpacity={0.7}>
                   <Text className='text-textColor font-medium text-xs'>Good</Text>
                 </TouchableOpacity>
               </View>
@@ -188,8 +222,9 @@ const Flashcard = () => {
             </View>
           )
         }
-      </View>
-    </SafeAreaView>
+        {/* </View> */}
+      </ScrollView>
+    </SafeAreaView >
   )
 }
 

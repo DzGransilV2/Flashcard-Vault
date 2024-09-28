@@ -11,7 +11,10 @@ module.exports = {
         textColor:"#F4F0F0",
         redBg:"#871214",
         yellowBg:"#876A12",
-        greenBg:"#1C8712"
+        greenBg:"#1C8712",
+        greenBrightBg:"#13E500",
+        yellowBrightBg:"#E5AC00",
+        redBrightBg:"#E50004"
       }
     },
   },

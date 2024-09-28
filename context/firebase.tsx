@@ -154,7 +154,8 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
             categoryImageExists: string
         };
         category_id?: string | null;
-        answer_status_id?: string | null;
+        card_status?: string | null;
+        answer_status?: string | null;
     }
 
     const addCard = async (cardData: cardDataProps) => {
@@ -169,7 +170,8 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
             const categoryImageExists = cardData.form.categoryImageExists ?? null;
             const category_id = cardData.category_id ?? null;
             const category_id_exists = cardData.form.category_id_exists ?? null;
-            const answer_status_id = cardData.answer_status_id ?? null;
+            const card_status = cardData.card_status ?? null;
+            const answer_status = cardData.answer_status ?? null;
             const userID = user;
 
             if (!question || !answer || !keywords) {
@@ -182,7 +184,8 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
                     answer,
                     keywords,
                     category_id: category_id_exists,
-                    answer_status_id,
+                    card_status,
+                    answer_status,
                     userID,
                 });
                 const card_id = docRef.id;
@@ -198,7 +201,8 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
                     answer,
                     keywords,
                     category_id,
-                    answer_status_id,
+                    card_status,
+                    answer_status,
                     userID,
                 });
                 const card_id = docRef.id;
@@ -269,19 +273,19 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
     interface Card {
         id: string;
         answer: string;
-        answer_status_id: string;
+        card_status: string;
         card_id: string;
         category_id: string;
         keywords: string;
-        question:string;
-        userID:string
+        question: string;
+        userID: string
     }
 
-    const fetchCategoryCards = async (category_id: string, userID:string): Promise<Card[]> => {
+    const fetchCategoryCards = async (category_id: string, userID: string): Promise<Card[]> => {
         try {
             const cardsRef = collection(firestore, "cards");
 
-            const q = query(cardsRef, 
+            const q = query(cardsRef,
                 where("userID", "==", userID),
                 where("category_id", "==", category_id)
             );
@@ -295,7 +299,7 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
                 cards.push({
                     id: doc.id,
                     answer: data.answer,
-                    answer_status_id: data.answer_status_id,
+                    card_status: data.card_status,
                     card_id: data.card_id,
                     category_id: data.category_id,
                     keywords: data.keywords,
@@ -311,9 +315,49 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
         }
     };
 
+    interface updateProps {
+        card_id: string;
+        card_status: string;
+    }
+
+    const updateCardStatus = async (cardData: updateProps) => {
+        try {
+            const card_id = cardData.card_id;
+            const card_status = cardData.card_status;
+            const userID = user;
+
+            if (!card_id || !card_status) {
+                console.error("Card ID or Card Status is missing");
+                return;
+            }
+            const cardsRef = collection(firestore, "cards");
+            const q = query(
+                cardsRef,
+                where("userID", "==", userID),
+                where("card_id", "==", card_id)
+            );
+            const querySnapshot = await getDocs(q);
+            if (querySnapshot.empty) {
+                console.error("No matching documents found.");
+                return;
+            }
+            querySnapshot.forEach(async (doc) => {
+                const docRef = doc.ref;
+
+                await updateDoc(docRef, {
+                    card_status: card_status,
+                });
+                console.log("Card status updated successfully!");
+            });
+            return "Card status updated successfully! Changes will be reflected in the UI after a refresh.";
+        } catch (e) {
+            console.error("Error updating card status: ", e);
+        }
+    };
+
 
     return (
-        <FirebaseContext.Provider value={{ signUp, signIn, addCard, fetchCategoriesByUserId, user, setUser, fetchCategoryCards }}>
+        <FirebaseContext.Provider value={{ signUp, signIn, addCard, fetchCategoriesByUserId, user, setUser, fetchCategoryCards, updateCardStatus }}>
             {children}
         </FirebaseContext.Provider>
     );
