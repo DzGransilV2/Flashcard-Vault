@@ -266,9 +266,54 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
         }
     };
 
+    interface Card {
+        id: string;
+        answer: string;
+        answer_status_id: string;
+        card_id: string;
+        category_id: string;
+        keywords: string;
+        question:string;
+        userID:string
+    }
+
+    const fetchCategoryCards = async (category_id: string, userID:string): Promise<Card[]> => {
+        try {
+            const cardsRef = collection(firestore, "cards");
+
+            const q = query(cardsRef, 
+                where("userID", "==", userID),
+                where("category_id", "==", category_id)
+            );
+
+            const querySnapshot = await getDocs(q);
+
+            const cards: Card[] = [];
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                cards.push({
+                    id: doc.id,
+                    answer: data.answer,
+                    answer_status_id: data.answer_status_id,
+                    card_id: data.card_id,
+                    category_id: data.category_id,
+                    keywords: data.keywords,
+                    question: data.question,
+                    userID: data.userID
+                } as Card);
+            });
+
+            return cards;
+        } catch (error) {
+            console.error("Error fetching cards: ", error);
+            return [];
+        }
+    };
+
 
     return (
-        <FirebaseContext.Provider value={{ signUp, signIn, addCard, fetchCategoriesByUserId, user, setUser }}>
+        <FirebaseContext.Provider value={{ signUp, signIn, addCard, fetchCategoriesByUserId, user, setUser, fetchCategoryCards }}>
             {children}
         </FirebaseContext.Provider>
     );

@@ -10,13 +10,20 @@ interface Props{
 
 const CategoryCard = ({category_image, category_name, category_id}:Props) => {
 
-    const categoryCards = (category_id:string) => {
-        router.push(`/flashcard/${category_id}`)
+    const categoryCards = (category_id:string, category_name:string) => {
+        router.push({
+            pathname: '/flashcard/[id]',
+            params: { 
+              id: category_id,
+              category_name: category_name
+            },
+          });
+          
     }
 
     return (
         <TouchableOpacity 
-        onPress={()=>categoryCards(category_id)}
+        onPress={()=>categoryCards(category_id, category_name)}
         activeOpacity={0.7} 
         className='bg-cardBg h-[150px] w-[150px] items-center justify-center border-[1px] mb-5 border-secondary rounded-[10px]'>
             <Image 
