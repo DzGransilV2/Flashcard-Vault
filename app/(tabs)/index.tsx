@@ -73,6 +73,7 @@ const Home = () => {
                 <CategoryCard
                   category_image={item.value[1]}
                   category_name={item.label}
+                  category_id={item.value[0]}
                 />
               )}
               ListEmptyComponent={() => (

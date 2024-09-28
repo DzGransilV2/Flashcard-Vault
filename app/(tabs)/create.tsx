@@ -88,7 +88,7 @@ const Create = () => {
     try {
       const result = await addCard({ form });
       router.replace('/(tabs)/');
-      Alert.alert("Success", "Upload successful");
+      Alert.alert("Success", "Success! Your card has been uploaded. Swipe down to refresh and view it!");
       setForm({...form, 
         question: '',
         answer: '',
