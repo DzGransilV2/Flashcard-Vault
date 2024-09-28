@@ -11,6 +11,12 @@ const Flashcard = () => {
 
   // console.log(id)
 
+  const { user, fetchCategoryCards } = useFirebase();
+
+  const [data, setData] = useState<Card[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+
   const [isFlipped, setIsFlipped] = useState(false); // To track the flip state
   const animatedValue = useRef(new Animated.Value(0)).current; // Animated value for flipping
 
@@ -44,6 +50,12 @@ const Flashcard = () => {
     }
   };
 
+  useEffect(() => {
+    // Reset flip state and animated value
+    setIsFlipped(false);
+    animatedValue.setValue(0);
+  }, [currentCardIndex]);
+
   interface Card {
     id: string;
     answer: string;
@@ -54,11 +66,6 @@ const Flashcard = () => {
     question: string;
     userID: string
   }
-
-  const { user, fetchCategoryCards } = useFirebase();
-
-  const [data, setData] = useState<Card[]>([]);
-  const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
     setLoading(true)
@@ -88,6 +95,22 @@ const Flashcard = () => {
   }, [user]);
 
 
+  const handleNext = () => {
+    if (currentCardIndex < data.length - 1) {
+      setCurrentCardIndex(currentCardIndex + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentCardIndex > 0) {
+      setCurrentCardIndex(currentCardIndex - 1);
+    }
+  };
+
+
+  const currentCard = data[currentCardIndex];
+
+
   return (
     <SafeAreaView className='bg-primary h-full'>
       <View className='h-full mx-[40px]'>
@@ -97,19 +120,15 @@ const Flashcard = () => {
         {
           !loading ? (
             <View className='h-[550px] justify-center'>
-              {/* <View className='h-[330px] w-[330px] bg-cardBg border border-secondary rounded-[10px] items-center justify-center mb-[10px]'>
-            <Text className='text-textColor font-bold text-3xl'>Tomodachi</Text>
-          </View> */}
-
-              {data.map((item, index) => (
-                <View key={index}>
+              {currentCard && (
+                <View >
                   <TouchableWithoutFeedback onPress={flipCard}>
                     <View>
                       {/* Front Card */}
                       <Animated.View
                         className="h-[330px] w-[330px] bg-cardBg border border-secondary rounded-[10px] items-center justify-center mb-[10px] p-5"
                         style={[{ backfaceVisibility: 'hidden' }, { transform: [{ rotateY: frontInterpolate }] }]}>
-                        <Text className='text-textColor text-center font-bold text-3xl'>{item.question}</Text>
+                        <Text className='text-textColor text-center font-bold text-3xl'>{currentCard.question}</Text>
                       </Animated.View>
                       {/* Back Card */}
                       <Animated.View
@@ -119,13 +138,12 @@ const Flashcard = () => {
                           { transform: [{ rotateY: backInterpolate }] },
                         ]}
                       >
-                        <Text className='text-textColor text-center font-medium text-xl'>{item.answer}</Text>
+                        <Text className='text-textColor text-center font-medium text-xl break-words'>{currentCard.answer}</Text>
                       </Animated.View>
                     </View>
                   </TouchableWithoutFeedback>
                 </View>
-              ))}
-              
+              )}
               <View className='flex flex-row w-[330px] h-[50px] items-center justify-evenly bg-cardBg rounded-[10px] border border-secondary mb-[10px]'>
                 <TouchableOpacity className='w-[75px] h-[26px] bg-redBg rounded-[10px] items-center justify-center' activeOpacity={0.7}>
                   <Text className='text-textColor font-medium text-xs'>Bad</Text>
@@ -138,14 +156,22 @@ const Flashcard = () => {
                 </TouchableOpacity>
               </View>
               <View className='flex flex-row justify-between'>
-                <TouchableOpacity className='w-[100px] h-[35px] bg-cardBg border border-secondary rounded-[10px] items-center justify-center' activeOpacity={0.7}>
+                {/* Back arrow button */}
+                <TouchableOpacity
+                  onPress={handleBack}
+                  disabled={currentCardIndex === 0}
+                  className={`w-[100px] h-[35px] bg-cardBg ${currentCardIndex === 0 ? '' : 'border border-secondary'} rounded-[10px] items-center justify-center`} activeOpacity={0.7}>
                   <Image
                     className='w-6 h-6 rotate-180'
                     source={icons.arrow}
                     resizeMode='contain'
                   />
                 </TouchableOpacity>
-                <TouchableOpacity className='w-[100px] h-[35px] bg-cardBg border border-secondary rounded-[10px] items-center justify-center' activeOpacity={0.7}>
+                {/* Next arrow button */}
+                <TouchableOpacity
+                  onPress={handleNext}
+                  disabled={currentCardIndex === data.length - 1}
+                  className={`w-[100px] h-[35px] bg-cardBg ${currentCardIndex === data.length - 1 ? '' : 'border border-secondary'} rounded-[10px] items-center justify-center`} activeOpacity={0.7}>
                   <Image
                     className='w-6 h-6'
                     source={icons.arrow}
