@@ -2,7 +2,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import auth, { updateProfile } from '@react-native-firebase/auth'
 import { ref } from '@react-native-firebase/database'
 import storage, { uploadBytesResumable } from '@react-native-firebase/storage';
-import { addDoc, collection, getFirestore, setDoc, doc, query, where, getDocs, updateDoc, arrayUnion, getDoc, deleteDoc } from '@react-native-firebase/firestore'
+import { addDoc, collection, getFirestore, setDoc, doc, query, where, getDocs, updateDoc, arrayUnion, getDoc, deleteDoc, deleteField, arrayRemove } from '@react-native-firebase/firestore'
 import { Alert } from "react-native";
 // import { nanoid } from 'nanoid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -430,10 +430,10 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
             const card_id = cardId;
             const userID = user;
 
-            console.log("userID:", userID);
-            console.log("card_id:", card_id);
-            console.log("category_id_exists:", category_id_exists);
-            console.log("category_id_exists_previous:", category_id_exists_previous);
+            // console.log("userID:", userID);
+            // console.log("card_id:", card_id);
+            // console.log("category_id_exists:", category_id_exists);
+            // console.log("category_id_exists_previous:", category_id_exists_previous);
 
             if (categoryImageExists && category_id_exists) {
                 const cardsRef = collection(firestore, "cards");
@@ -460,9 +460,34 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
                     });
                 });
 
-                await setDoc(doc(firestore, "categories", category_id_exists), {
-                    card_id: arrayUnion(card_id),
-                }, { merge: true });
+
+                // await setDoc(doc(firestore, "categories", category_id_exists), {
+                //     card_id: arrayUnion(card_id),
+                // }, { merge: true });
+
+                const categoriesRef = collection(firestore, "categories");
+                const categoryQuery = query(
+                    categoriesRef,
+                    where("userID", "==", userID),
+                    where("category_id", "==", category_id_exists)
+                );
+                const categorySnapshot = await getDocs(categoryQuery);
+
+                if (categorySnapshot.empty) {
+                    console.error("No matching categories found.");
+                    return;
+                }
+
+                categorySnapshot.forEach(async (doc) => {
+                    const docRef = doc.ref;
+
+                    await updateDoc(docRef, {
+                        card_id: arrayUnion(card_id),
+                    });
+                    console.log("Category updated successfully!");
+                });
+
+
 
                 if (category_id_exists_previous) {
 
@@ -528,9 +553,33 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
                 if (categoryUrl) {
                     const resCategory = await createCategory(categoryName, categoryUrl, userID);
 
-                    await setDoc(doc(firestore, "categories", resCategory), {
-                        card_id: arrayUnion(card_id),
-                    }, { merge: true });
+                    // await setDoc(doc(firestore, "categories", resCategory), {
+                    //     card_id: arrayUnion(card_id),
+                    // }, { merge: true });
+
+                    const categoriesRef = collection(firestore, "categories");
+                    const categoryQuery = query(
+                        categoriesRef,
+                        where("userID", "==", userID),
+                        where("category_id", "==", resCategory)
+                    );
+                    const categorySnapshot = await getDocs(categoryQuery);
+
+                    if (categorySnapshot.empty) {
+                        console.error("No matching categories found.");
+                        return;
+                    }
+
+                    categorySnapshot.forEach(async (doc) => {
+                        const docRef = doc.ref;
+
+                        await updateDoc(docRef, {
+                            card_id: arrayUnion(card_id),
+                        });
+                        console.log("Category updated successfully!");
+                    });
+
+
 
                     await setDoc(doc(firestore, "cards", card_id), { category_id: resCategory }, { merge: true });
 
@@ -578,10 +627,71 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
         }
     }
 
+    interface CardDeleteProps {
+        userID: string,
+        card_id: string,
+        category_id: string
+    }
+
+    const deleteCard = async (userID: string, card_id: string, category_id: string) => {
+        try {
+            // Deleting the card from the "cards" collection
+            const cardsRef = collection(firestore, "cards");
+            const cardQuery = query(
+                cardsRef,
+                where("userID", "==", userID),
+                where("card_id", "==", card_id)
+            );
+            const cardSnapshot = await getDocs(cardQuery);
+
+            if (cardSnapshot.empty) {
+                console.error("No matching card found.");
+                return;
+            }
+
+            // Delete the card document
+            cardSnapshot.forEach(async (doc) => {
+                const docRef = doc.ref;
+                await deleteDoc(docRef);
+                console.log(`Card ${card_id} deleted successfully!`);
+            });
+
+            // Now, update the category to remove the card_id from the array
+            const categoryRef = doc(firestore, "categories", category_id); // Directly reference the category document using category_id
+            const categorySnapshot = await getDoc(categoryRef);
+
+            if (!categorySnapshot.exists) {
+                console.error("No matching category found.");
+                return;
+            }
+
+            // Remove the card_id from the card_id array
+            await updateDoc(categoryRef, {
+                card_id: arrayRemove(card_id)
+            });
+
+            // Check if the category has any remaining cards
+            const updatedCategorySnapshot = await getDoc(categoryRef);
+            const updatedCategoryData = updatedCategorySnapshot.data();
+            const remainingCardIds = updatedCategoryData?.card_id ?? [];
+
+            // If no more cards in the category, delete the category
+            if (remainingCardIds.length === 0) {
+                await deleteDoc(categoryRef);
+                console.log(`Category ${category_id} deleted since it had no remaining cards.`);
+            }
+
+            return "Delete successful";
+        } catch (error) {
+            console.log("Error in deleting:", error);
+        }
+    };
+
+
 
 
     return (
-        <FirebaseContext.Provider value={{ signUp, signIn, addCard, fetchCategoriesByUserId, user, setUser, fetchCategoryCards, updateCardStatus, fetchAllCards, updateCard }}>
+        <FirebaseContext.Provider value={{ signUp, signIn, addCard, fetchCategoriesByUserId, user, setUser, fetchCategoryCards, updateCardStatus, fetchAllCards, updateCard, deleteCard }}>
             {children}
         </FirebaseContext.Provider>
     );

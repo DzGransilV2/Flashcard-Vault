@@ -1,7 +1,8 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native'
+import { View, Text, Image, TouchableOpacity, Alert } from 'react-native'
 import React from 'react'
 import { icons } from '@/constants'
 import { router } from 'expo-router';
+import { useFirebase } from '@/context/firebase';
 
 interface Card {
     id: string;
@@ -20,6 +21,8 @@ interface EditCardProps {
 
 const EditCard: React.FC<EditCardProps> = ({ item }) => {
 
+    const { deleteCard } = useFirebase();
+
     const redirectToUpdate = () => {
         router.push({
             pathname: '/edit/[id]',
@@ -27,6 +30,39 @@ const EditCard: React.FC<EditCardProps> = ({ item }) => {
                 id: item.id
             }
         })
+    }
+
+    const deleteFlashcard = async () => {
+        try {
+            Alert.alert(
+                "Confirm Delete",
+                "Are you sure you want to delete this flashcard?",
+                [
+                    {
+                        text: "Cancel",
+                        onPress: () => console.log("Delete cancelled"),
+                        style: "cancel"
+                    },
+                    {
+                        text: "Delete",
+                        onPress: async () => {
+                            try {
+                                const response = await deleteCard(item.userID, item.card_id, item.category_id);
+                                Alert.alert("Delete Success", response);
+                            } catch (error) {
+                                console.log("Error during deletion", error);
+                            }
+                        },
+                        style: "destructive"
+                    }
+                ],
+                { cancelable: true }
+            );
+            // const response = await deleteCard(item.userID, item.card_id, item.category_id);
+            // Alert.alert("Delete Success", response)
+        } catch (error) {
+            console.log("DELETE from CLient", error)
+        }
     }
 
     return (
@@ -38,6 +74,7 @@ const EditCard: React.FC<EditCardProps> = ({ item }) => {
             <View className='flex flex-row gap-5'>
                 <TouchableOpacity
                     activeOpacity={0.7}
+                    onPress={deleteFlashcard}
                 >
                     <Image
                         className='w-6 h-6'
