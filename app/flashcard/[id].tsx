@@ -171,20 +171,20 @@ const Flashcard = () => {
               )}
               <View className='flex flex-row w-[330px] h-[50px] items-center justify-evenly bg-cardBg rounded-[10px] border border-secondary mb-[10px]'>
                 <TouchableOpacity
-                  onPress={() => updateStatus(currentCard.card_id, 'bad')}
-                  className={`w-[75px] h-[26px] ${currentCard.card_status === 'bad' ? 'bg-redBrightBg' : 'bg-redBg'}  rounded-[10px] items-center justify-center`}
+                  onPress={() => updateStatus(currentCard.card_id, 'Bad')}
+                  className={`w-[75px] h-[26px] ${currentCard.card_status === 'Bad' ? 'bg-redBrightBg' : 'bg-redBg'}  rounded-[10px] items-center justify-center`}
                   activeOpacity={0.7}>
                   <Text className='text-textColor font-medium text-xs'>Bad</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => updateStatus(currentCard.card_id, 'ok')}
-                  className={`w-[75px] h-[26px] ${currentCard.card_status === 'ok' ? 'bg-yellowBrightBg' : 'bg-yellowBg'}  rounded-[10px] items-center justify-center`}
+                  onPress={() => updateStatus(currentCard.card_id, 'Ok')}
+                  className={`w-[75px] h-[26px] ${currentCard.card_status === 'Ok' ? 'bg-yellowBrightBg' : 'bg-yellowBg'}  rounded-[10px] items-center justify-center`}
                   activeOpacity={0.7}>
                   <Text className='text-textColor font-medium text-xs'>Ok</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => updateStatus(currentCard.card_id, 'good')}
-                  className={`w-[75px] h-[26px] ${currentCard.card_status === 'good' ? 'bg-greenBrightBg' : 'bg-greenBg'}  rounded-[10px] items-center justify-center`}
+                  onPress={() => updateStatus(currentCard.card_id, 'Good')}
+                  className={`w-[75px] h-[26px] ${currentCard.card_status === 'Good' ? 'bg-greenBrightBg' : 'bg-greenBg'}  rounded-[10px] items-center justify-center`}
                   activeOpacity={0.7}>
                   <Text className='text-textColor font-medium text-xs'>Good</Text>
                 </TouchableOpacity>

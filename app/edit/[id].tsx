@@ -33,7 +33,7 @@ const Update = () => {
     const { id } = useLocalSearchParams();
     const cardId = Array.isArray(id) ? id[0] : id;
 
-    const { addCard, user, fetchAllCards, fetchCategoriesByUserId } =
+    const { updateCard, user, fetchAllCards, fetchCategoriesByUserId } =
         useFirebase();
 
     const [data, setData] = useState<Card | null>(null);
@@ -47,6 +47,7 @@ const Update = () => {
         keywords: "",
         card_status: "",
         category_id_exists: "",
+        category_id_exists_previous: "",
         category: "",
         categoryImage: "",
         categoryImageExists: "",
@@ -72,6 +73,7 @@ const Update = () => {
                     keywords: foundCard.keywords,
                     card_status: foundCard.card_status,
                     category_id_exists: foundCard?.category_id || "",
+                    category_id_exists_previous: foundCard?.category_id || "",
                     category: foundCategory?.categoryName || "",
                     categoryImage: "",
                     categoryImageExists: foundCategory?.categoryImage || "",
@@ -117,8 +119,7 @@ const Update = () => {
         setForm((prevForm) => ({
             ...prevForm,
             categoryImage: text,
-            categoryImageExists: "",
-            category_id_exists: ""
+            categoryImageExists: ""
         }));
     };
 
@@ -144,11 +145,11 @@ const Update = () => {
         }
         setIsSubmitting(true);
         try {
-            // Submit form logic
+            const response = await updateCard({ form }, cardId)
             router.replace("/(tabs)/edit");
             Alert.alert(
                 "Success",
-                "Success! Your card has been uploaded. Swipe down to refresh and view it!"
+                response
             );
             setForm({
                 question: "",
@@ -156,6 +157,7 @@ const Update = () => {
                 keywords: "",
                 card_status: "",
                 category_id_exists: "",
+                category_id_exists_previous: "",
                 category: "",
                 categoryImage: "",
                 categoryImageExists: "",

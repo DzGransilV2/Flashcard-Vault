@@ -2,7 +2,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import auth, { updateProfile } from '@react-native-firebase/auth'
 import { ref } from '@react-native-firebase/database'
 import storage, { uploadBytesResumable } from '@react-native-firebase/storage';
-import { addDoc, collection, getFirestore, setDoc, doc, query, where, getDocs, updateDoc, arrayUnion } from '@react-native-firebase/firestore'
+import { addDoc, collection, getFirestore, setDoc, doc, query, where, getDocs, updateDoc, arrayUnion, getDoc, deleteDoc } from '@react-native-firebase/firestore'
 import { Alert } from "react-native";
 // import { nanoid } from 'nanoid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -401,9 +401,187 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
     }
 
 
+    interface updateCardProps {
+        form: {
+            question: string,
+            answer: string,
+            keywords: string,
+            card_status: string,
+            category_id_exists: string,
+            category_id_exists_previous: string,
+            category: string,
+            categoryImage: string,
+            categoryImageExists: string
+        };
+    }
+
+
+    const updateCard = async (cardData: updateCardProps, cardId: string) => {
+        try {
+            const question = cardData.form.question ?? null;
+            const answer = cardData.form.answer ?? null;
+            const keywords = cardData.form.keywords ?? null;
+            const card_status = cardData.form.card_status ?? null;
+            const categoryName = cardData.form.category ?? null;
+            const categoryImage = cardData.form.categoryImage ?? null;
+            const categoryImageExists = cardData.form.categoryImageExists ?? null;
+            const category_id_exists = cardData.form.category_id_exists ?? null;
+            const category_id_exists_previous = cardData.form.category_id_exists_previous ?? null;
+            const card_id = cardId;
+            const userID = user;
+
+            console.log("userID:", userID);
+            console.log("card_id:", card_id);
+            console.log("category_id_exists:", category_id_exists);
+            console.log("category_id_exists_previous:", category_id_exists_previous);
+
+            if (categoryImageExists && category_id_exists) {
+                const cardsRef = collection(firestore, "cards");
+                const q = query(
+                    cardsRef,
+                    where("userID", "==", userID),
+                    where("card_id", "==", card_id)
+                );
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    console.error("No matching documents found.");
+                    return;
+                }
+                querySnapshot.forEach(async (doc) => {
+                    const docRef = doc.ref;
+
+                    await updateDoc(docRef, {
+                        question: question,
+                        answer: answer,
+                        keywords: keywords,
+                        card_status: card_status,
+                        category_id: category_id_exists
+                    });
+                });
+
+                await setDoc(doc(firestore, "categories", category_id_exists), {
+                    card_id: arrayUnion(card_id),
+                }, { merge: true });
+
+                if (category_id_exists_previous) {
+
+                    const oldCategoryRef = doc(firestore, "categories", category_id_exists_previous);
+                    const oldCategorySnapshot = await getDoc(oldCategoryRef);
+
+                    if (oldCategorySnapshot.exists) {
+                        const oldCategoryData = oldCategorySnapshot.data();
+
+                        const oldCategoryCardIds = oldCategoryData?.card_id ?? [];
+
+                        const cardIndex = oldCategoryCardIds.indexOf(card_id);
+
+                        if (cardIndex > -1) {
+                            oldCategoryCardIds.splice(cardIndex, 1);
+
+                            await updateDoc(oldCategoryRef, { card_id: oldCategoryCardIds });
+
+                            console.log("Card removed from old category:", category_id_exists_previous);
+
+                            if (oldCategoryCardIds.length === 0) {
+                                await deleteDoc(oldCategoryRef);
+                                console.log("Old category deleted:", category_id_exists_previous);
+                            }
+                        } else {
+                            console.log("The card is not present in the old category.");
+                        }
+                    } else {
+                        console.error("Old category not found.");
+                    }
+
+                }
+
+                console.log("Card updated successfully!");
+                return "Card updated successfully! Changes will be reflected in the UI after a refresh.";
+
+            } else {
+                const cardsRef = collection(firestore, "cards");
+                const q = query(
+                    cardsRef,
+                    where("userID", "==", userID),
+                    where("card_id", "==", card_id)
+                );
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    console.error("No matching documents found.");
+                    return;
+                }
+                querySnapshot.forEach(async (doc) => {
+                    const docRef = doc.ref;
+
+                    await updateDoc(docRef, {
+                        question: question,
+                        answer: answer,
+                        keywords: keywords,
+                        card_status: card_status,
+                    });
+                });
+
+                // await setDoc(doc(firestore, "cards", card_id), { card_id }, { merge: true });
+                const categoryUrl = await uploadCategoryImage(categoryImage);
+                if (categoryUrl) {
+                    const resCategory = await createCategory(categoryName, categoryUrl, userID);
+
+                    await setDoc(doc(firestore, "categories", resCategory), {
+                        card_id: arrayUnion(card_id),
+                    }, { merge: true });
+
+                    await setDoc(doc(firestore, "cards", card_id), { category_id: resCategory }, { merge: true });
+
+                    if (category_id_exists) {
+                        const oldCategoryRef = doc(firestore, "categories", category_id_exists);
+                        const oldCategorySnapshot = await getDoc(oldCategoryRef);
+
+                        if (oldCategorySnapshot.exists) {
+                            const oldCategoryData = oldCategorySnapshot.data();
+
+                            const oldCategoryCardIds = oldCategoryData?.card_id ?? [];
+
+                            const cardIndex = oldCategoryCardIds.indexOf(card_id);
+
+                            if (cardIndex > -1) {
+                                oldCategoryCardIds.splice(cardIndex, 1);
+
+                                await updateDoc(oldCategoryRef, { card_id: oldCategoryCardIds });
+
+                                console.log("Card removed from old category:", category_id_exists);
+
+                                if (oldCategoryCardIds.length === 0) {
+                                    await deleteDoc(oldCategoryRef);
+                                    console.log("Old category deleted:", category_id_exists);
+                                }
+                            } else {
+                                console.log("The card is not present in the old category.");
+                            }
+                        } else {
+                            console.error("Old category not found.");
+                        }
+
+                    }
+
+                } else {
+                    console.error("Category URL is undefined. Cannot create category.");
+                }
+                console.log("Card document written with ID: ", card_id);
+                console.log("Card updated successfully!");
+                return "Card updated successfully! Changes will be reflected in the UI after a refresh.";
+            }
+
+        } catch (error) {
+            console.log("Error updating:", error)
+        }
+    }
+
+
 
     return (
-        <FirebaseContext.Provider value={{ signUp, signIn, addCard, fetchCategoriesByUserId, user, setUser, fetchCategoryCards, updateCardStatus, fetchAllCards }}>
+        <FirebaseContext.Provider value={{ signUp, signIn, addCard, fetchCategoriesByUserId, user, setUser, fetchCategoryCards, updateCardStatus, fetchAllCards, updateCard }}>
             {children}
         </FirebaseContext.Provider>
     );

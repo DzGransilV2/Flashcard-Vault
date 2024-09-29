@@ -21,7 +21,7 @@ const RadioButton: React.FC<RadioButtonProps> = ({ label, value, selected, onPre
 
 interface Props {
   setShowCategory: React.Dispatch<React.SetStateAction<string>>;
-  oldCategory: string;
+  oldCategory?: string;
 }
 
 const RadioButtonGroup: React.FC<Props> = ({ setShowCategory, oldCategory }) => {
@@ -29,7 +29,7 @@ const RadioButtonGroup: React.FC<Props> = ({ setShowCategory, oldCategory }) => 
   const [selectedValue, setSelectedValue] = useState<string | null>(oldCategory || null);
 
   useEffect(() => {
-    setSelectedValue(oldCategory);
+    setSelectedValue(oldCategory || null);
   }, [oldCategory]);
 
 

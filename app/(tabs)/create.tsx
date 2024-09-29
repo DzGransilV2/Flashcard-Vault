@@ -19,7 +19,7 @@ const Create = () => {
     category_id_exists: '',
     category: '',
     categoryImage: '',
-    categoryImageExists:''
+    categoryImageExists: ''
   })
   // const [imageVerify, setImageVerify] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,7 +28,7 @@ const Create = () => {
   useEffect(() => {
     console.log("Updated form:", form);
   }, [form]);
-  
+
 
 
   const handleQuestionChange = (text: string) => {
@@ -56,14 +56,14 @@ const Create = () => {
       categoryImageExists: '',
     }));
   };
-  
-  
+
+
 
   const exitsImage = (text: string) => {
     setForm((prevForm) => ({
       ...prevForm,
-      categoryImageExists: text, 
-      categoryImage: '', 
+      categoryImageExists: text,
+      categoryImage: '',
     }));
   };
 
@@ -73,8 +73,8 @@ const Create = () => {
       category_id_exists: text
     }));
   }
-  
-  
+
+
 
 
   const { addCard } = useFirebase();
@@ -83,20 +83,22 @@ const Create = () => {
     if (!form.answer || !form.question || !form.keywords || !form.category) {
       Alert.alert('Error', 'Please fill in all the fields');
       return
-  }
+    }
     setIsSubmitting(true)
     try {
       const result = await addCard({ form });
       router.replace('/(tabs)/');
       Alert.alert("Success", "Success! Your card has been uploaded. Swipe down to refresh and view it!");
-      setForm({...form, 
+      setForm({
+        ...form,
         question: '',
         answer: '',
         keywords: '',
         category_id_exists: '',
         category: '',
         categoryImage: '',
-        categoryImageExists:'' })
+        categoryImageExists: ''
+      })
     } catch (error) {
       Alert.alert('Error', 'Got error in signIn but client side');
       console.log("Error:", error)

@@ -48,14 +48,14 @@ const Edit = () => {
 
   return (
     <SafeAreaView className='h-full bg-primary'>
-      <View className='h-full mx-[40px]'>
+      <View className='mx-[40px]'>
         <View className='mt-10'>
           <SearchComponent />
         </View>
         <Text className='text-textColor mt-[30px] text-xl font-semibold'>Edit Cards</Text>
         <ScrollView
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-          className='mt-5'>
+          className='mt-5 h-[589px]'>
           {
             data.map((item, index) => (
               <EditCard key={index} item={item} />

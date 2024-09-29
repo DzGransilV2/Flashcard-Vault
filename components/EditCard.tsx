@@ -30,8 +30,8 @@ const EditCard: React.FC<EditCardProps> = ({ item }) => {
     }
 
     return (
-        <View className='bg-cardBg h-[70px] mb-5 w-full px-5 flex flex-row items-center border-[1px] border-secondary rounded-[10px]'>
-            <View className='w-[187px] mr-5 gap-1'>
+        <View className='bg-cardBg h-[70px] mb-5 w-full px-5 flex flex-row items-center justify-between border-[1px] border-secondary rounded-[10px]'>
+            <View className='w-[187px] gap-1'>
                 <Text className='text-white font-medium text-xl'>{item.question}</Text>
                 <Text numberOfLines={1} className='text-white font-normal text-xs'>{item.answer}</Text>
             </View>

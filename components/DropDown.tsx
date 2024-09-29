@@ -28,7 +28,7 @@ const DropDown: React.FC<DropDownProps> = ({ oldCategoryLabel, oldCategoryValue,
   const { fetchCategoriesByUserId, user } = useFirebase();
   const [data, setData] = useState<DropdownItem[]>([]);
 
-  console.log("Label and Value:", oldCategoryLabel, oldCategoryValue)
+  // console.log("Label and Value:", oldCategoryLabel, oldCategoryValue)
 
   const fetchCategories = async () => {
     if (user) {
@@ -48,7 +48,7 @@ const DropDown: React.FC<DropDownProps> = ({ oldCategoryLabel, oldCategoryValue,
 
   useEffect(() => {
     fetchCategories();
-    console.log("Current Value", value)
+    // console.log("Current Value", value)
   }, [user]);
 
 
