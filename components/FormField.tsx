@@ -6,7 +6,7 @@ interface Props {
     fieldHeading: string,
     placeholder: string,
     handleChange?: (text: string) => void;
-    value?:string;
+    value?: string;
 }
 
 const FormField = ({ fieldHeading, placeholder, handleChange, value }: Props) => {
@@ -36,7 +36,7 @@ const FormField = ({ fieldHeading, placeholder, handleChange, value }: Props) =>
                     }}
                     secureTextEntry={fieldHeading === 'Password' && !showPassword}
                 />
-                 {
+                {
                     fieldHeading === 'Password' && (
                         <TouchableOpacity onPress={() => setShowPassword(!showPassword)} >
                             <Image

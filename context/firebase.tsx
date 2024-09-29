@@ -356,8 +356,54 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
     };
 
 
+    interface Card {
+        id: string;
+        answer: string;
+        card_status: string;
+        card_id: string;
+        category_id: string;
+        keywords: string;
+        question: string;
+        userID: string;
+    }
+
+    const fetchAllCards = async (userId: string) => {
+        try {
+            const cardsRef = collection(firestore, "cards");
+
+            const q = query(cardsRef, where("userID", "==", userId));
+
+
+            const querySnapshot = await getDocs(q);
+
+            const cards: Card[] = [];
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                cards.push({
+                    id: doc.id,
+                    question: data.question,
+                    answer: data.answer,
+                    keywords: data.keywords,
+                    card_status: data.card_status,
+                    card_id: data.card_id,
+                    category_id: data.category_id,
+                    userID: data.userID
+                } as Card);
+
+            });
+
+            // console.log(cards)
+            return cards;
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
+
     return (
-        <FirebaseContext.Provider value={{ signUp, signIn, addCard, fetchCategoriesByUserId, user, setUser, fetchCategoryCards, updateCardStatus }}>
+        <FirebaseContext.Provider value={{ signUp, signIn, addCard, fetchCategoriesByUserId, user, setUser, fetchCategoryCards, updateCardStatus, fetchAllCards }}>
             {children}
         </FirebaseContext.Provider>
     );

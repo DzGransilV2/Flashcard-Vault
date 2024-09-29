@@ -7,7 +7,7 @@ interface ImageProps {
   setImageVerify: (text: string) => void;
 }
 
-const ImagePickerCard = ({setImageVerify}:ImageProps) => {
+const ImagePickerCard = ({ setImageVerify }: ImageProps) => {
 
   const [image, setImage] = useState<string>('');
 
