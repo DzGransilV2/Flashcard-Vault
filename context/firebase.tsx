@@ -461,31 +461,31 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
                 });
 
 
-                // await setDoc(doc(firestore, "categories", category_id_exists), {
-                //     card_id: arrayUnion(card_id),
-                // }, { merge: true });
+                await setDoc(doc(firestore, "categories", category_id_exists), {
+                    card_id: arrayUnion(card_id),
+                }, { merge: true });
 
-                const categoriesRef = collection(firestore, "categories");
-                const categoryQuery = query(
-                    categoriesRef,
-                    where("userID", "==", userID),
-                    where("category_id", "==", category_id_exists)
-                );
-                const categorySnapshot = await getDocs(categoryQuery);
+                // const categoriesRef = collection(firestore, "categories");
+                // const categoryQuery = query(
+                //     categoriesRef,
+                //     where("userID", "==", userID),
+                //     where("category_id", "==", category_id_exists)
+                // );
+                // const categorySnapshot = await getDocs(categoryQuery);
 
-                if (categorySnapshot.empty) {
-                    console.error("No matching categories found.");
-                    return;
-                }
+                // if (categorySnapshot.empty) {
+                //     console.error("No matching categories found.");
+                //     return;
+                // }
 
-                categorySnapshot.forEach(async (doc) => {
-                    const docRef = doc.ref;
+                // categorySnapshot.forEach(async (doc) => {
+                //     const docRef = doc.ref;
 
-                    await updateDoc(docRef, {
-                        card_id: arrayUnion(card_id),
-                    });
-                    console.log("Category updated successfully!");
-                });
+                //     await updateDoc(docRef, {
+                //         card_id: arrayUnion(card_id),
+                //     });
+                //     console.log("Category updated successfully!");
+                // });
 
 
 
@@ -553,31 +553,31 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
                 if (categoryUrl) {
                     const resCategory = await createCategory(categoryName, categoryUrl, userID);
 
-                    // await setDoc(doc(firestore, "categories", resCategory), {
-                    //     card_id: arrayUnion(card_id),
-                    // }, { merge: true });
+                    await setDoc(doc(firestore, "categories", resCategory), {
+                        card_id: arrayUnion(card_id),
+                    }, { merge: true });
 
-                    const categoriesRef = collection(firestore, "categories");
-                    const categoryQuery = query(
-                        categoriesRef,
-                        where("userID", "==", userID),
-                        where("category_id", "==", resCategory)
-                    );
-                    const categorySnapshot = await getDocs(categoryQuery);
+                    // const categoriesRef = collection(firestore, "categories");
+                    // const categoryQuery = query(
+                    //     categoriesRef,
+                    //     where("userID", "==", userID),
+                    //     where("category_id", "==", resCategory)
+                    // );
+                    // const categorySnapshot = await getDocs(categoryQuery);
 
-                    if (categorySnapshot.empty) {
-                        console.error("No matching categories found.");
-                        return;
-                    }
+                    // if (categorySnapshot.empty) {
+                    //     console.error("No matching categories found.");
+                    //     return;
+                    // }
 
-                    categorySnapshot.forEach(async (doc) => {
-                        const docRef = doc.ref;
+                    // categorySnapshot.forEach(async (doc) => {
+                    //     const docRef = doc.ref;
 
-                        await updateDoc(docRef, {
-                            card_id: arrayUnion(card_id),
-                        });
-                        console.log("Category updated successfully!");
-                    });
+                    //     await updateDoc(docRef, {
+                    //         card_id: arrayUnion(card_id),
+                    //     });
+                    //     console.log("Category updated successfully!");
+                    // });
 
 
 
@@ -687,11 +687,37 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
         }
     };
 
+    const updateAnswerStatus = async (userID: string, card_id: string, boolAns: boolean) => {
+        try {
+            // console.log("USER ID:", userID)
+            // console.log("CARD ID:", card_id)
+            const cardRef = collection(firestore, "cards");
+            const q = query(
+                cardRef,
+                where("userID", "==", userID),
+                where("card_id", "==", card_id)
+            );
+            const querySnapshot = await getDocs(q);
 
+            if (querySnapshot.empty) {
+                console.error("No matching documents found.");
+                return;
+            }
 
+            querySnapshot.forEach(async (doc) => {
+                const docRef = doc.ref;
+                await updateDoc(docRef, {
+                    answer_status: boolAns
+                });
+            });
+
+        } catch (error) {
+            console.log("Error in updating answer status:", error);
+        }
+    }
 
     return (
-        <FirebaseContext.Provider value={{ signUp, signIn, addCard, fetchCategoriesByUserId, user, setUser, fetchCategoryCards, updateCardStatus, fetchAllCards, updateCard, deleteCard }}>
+        <FirebaseContext.Provider value={{ signUp, signIn, addCard, fetchCategoriesByUserId, user, setUser, fetchCategoryCards, updateCardStatus, fetchAllCards, updateCard, deleteCard, updateAnswerStatus }}>
             {children}
         </FirebaseContext.Provider>
     );

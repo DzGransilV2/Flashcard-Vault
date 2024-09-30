@@ -40,7 +40,7 @@ const ImagePickerCard = ({ setImageVerify }: ImageProps) => {
           <Text className='text-textColor font-medium text-base w-[320px]'>Preview</Text>
           <Image
             source={{ uri: image }}
-            className='h-[100px] w-[100px]'
+            className='h-[100px] w-[100px] rounded-[10px]'
             resizeMode='cover'
           />
         </>

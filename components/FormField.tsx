@@ -3,13 +3,15 @@ import React, { useEffect, useState } from 'react'
 import { icons } from '@/constants';
 
 interface Props {
-    fieldHeading: string,
+    fieldHeading?: string,
     placeholder: string,
     handleChange?: (text: string) => void;
     value?: string;
+    style?: string;
+    containerStyle?: string;
 }
 
-const FormField = ({ fieldHeading, placeholder, handleChange, value }: Props) => {
+const FormField = ({ fieldHeading, placeholder, handleChange, value, style, containerStyle }: Props) => {
 
     // const [value, setValue] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -22,12 +24,12 @@ const FormField = ({ fieldHeading, placeholder, handleChange, value }: Props) =>
     return (
         <>
             <Text className='text-textColor font-medium text-base'>{fieldHeading}</Text>
-            <View className='h-[49px] mt-[10px] bg-cardBg flex flex-row items-center px-5 rounded-[10px] border focus:border-activeColor border-secondary'>
+            <View className={`h-[49px] mt-[10px] bg-cardBg flex flex-row items-center px-5 rounded-[10px] border focus:border-activeColor border-secondary ${containerStyle}`}>
                 <TextInput
                     value={value}
                     placeholder={placeholder}
                     placeholderTextColor="#124D87"
-                    className='flex-1 text-sm font-normal text-textColor'
+                    className={`flex-1 text-sm font-normal  text-textColor ${style}`}
                     onChangeText={(text) => {
                         // setValue(text);
                         if (handleChange) {

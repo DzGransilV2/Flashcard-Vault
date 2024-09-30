@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import SearchComponent from '@/components/SearchComponent'
 import EditCard from '@/components/EditCard'
 import { useFirebase } from '@/context/firebase'
+import EmptyState from '@/components/EmptyState'
 
 interface Card {
   id: string;
@@ -57,9 +58,15 @@ const Edit = () => {
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           className='mt-5 h-[589px]'>
           {
-            data.map((item, index) => (
-              <EditCard key={index} item={item} />
-            ))
+            data.length > 0 ? (
+              data.map((item, index) => (
+                <EditCard key={index} item={item} />
+              ))) : (
+              <EmptyState
+                title='No cards found'
+                subtitle='Start your learning journey by adding your first flashcard!'
+              />
+            )
           }
         </ScrollView>
       </View>

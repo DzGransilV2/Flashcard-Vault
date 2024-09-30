@@ -1,15 +1,15 @@
 import { Text, TouchableOpacity } from 'react-native'
 import React from 'react'
 
-interface Props{
+interface Props {
     title: string,
     handlePress?: () => void,
-    containerStyle?:string,
-    textStyles?:string,
-    isLoading?:boolean
+    containerStyle?: string,
+    textStyles?: string,
+    isLoading?: boolean
 }
 
-const CustomBtn = ({ title, handlePress, containerStyle, textStyles, isLoading }:Props) => {
+const CustomBtn = ({ title, handlePress, containerStyle, textStyles, isLoading }: Props) => {
     return (
         <TouchableOpacity
             activeOpacity={0.7}

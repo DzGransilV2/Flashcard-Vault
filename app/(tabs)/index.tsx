@@ -62,11 +62,11 @@ const Home = () => {
             <Text className='text-textColor text-xl font-semibold'>Categories</Text>
           </View> */}
           {/* <ScrollView className='h-[610px] w-full'> */}
-            <View className='mt-5 flex flex-row flex-wrap justify-between w-full '>
-              {/* {data.map((item, index) => (
+          <View className='flex flex-row flex-wrap justify-between w-full'>
+            {/* {data.map((item, index) => (
                 <CategoryCard key={index} category_image={item.value[1]} category_name={item.label} />
               ))} */}
-              <FlatList
+            <FlatList
               data={data}
               keyExtractor={(item) => item.value[0]}
               renderItem={({ item }) => (
@@ -89,10 +89,10 @@ const Home = () => {
               )}
               numColumns={2} // Specify the number of columns
               columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: 10 }} // Add spacing between columns
-              refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>}
-              style={{ flex: 1, height:647 }}
+              refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+              style={{ flex: 1, height: 666 }}
             />
-            </View>
+          </View>
           {/* </ScrollView> */}
         </View>
       </SafeAreaView>
