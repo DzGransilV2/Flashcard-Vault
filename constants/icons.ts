@@ -12,7 +12,8 @@ export default {
     editing: require('@/assets/icons/editing.png'),
     eye: require('@/assets/icons/eye.png'),
     eyeHide: require('@/assets/icons/eye-hide.png'),
-    arrow: require('@/assets/icons/arrow.png')
+    arrow: require('@/assets/icons/arrow.png'),
+    logout: require('@/assets/icons/logout.png')
 }
 
 // export default {home, quiz}

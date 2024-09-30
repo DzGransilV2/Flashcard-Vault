@@ -2,7 +2,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import auth, { updateProfile } from '@react-native-firebase/auth'
 import { ref } from '@react-native-firebase/database'
 import storage, { uploadBytesResumable } from '@react-native-firebase/storage';
-import { addDoc, collection, getFirestore, setDoc, doc, query, where, getDocs, updateDoc, arrayUnion, getDoc, deleteDoc, deleteField, arrayRemove } from '@react-native-firebase/firestore'
+import { addDoc, collection, getFirestore, setDoc, doc, query, where, getDocs, updateDoc, arrayUnion, getDoc, deleteDoc, deleteField, arrayRemove, getCountFromServer } from '@react-native-firebase/firestore'
 import { Alert } from "react-native";
 // import { nanoid } from 'nanoid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -86,6 +86,7 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
                 // setUser(response.user.uid)
                 // await AsyncStorage.removeItem('userData');
                 await AsyncStorage.setItem('userData', JSON.stringify({ userId: response.user.uid, userName: response.user.displayName, userEmail: response.user.email }));
+                setUser(response.user.uid)
                 return response;
             } catch (error) {
                 Alert.alert('Sign In Error', 'An error occurred during sign in.');
@@ -95,6 +96,17 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
             console.error("Email and password must be provided."); // Ensure email and password are valid
         }
     };
+
+    const signOut = async () => {
+        try {
+            const response = await auth().signOut();
+            await AsyncStorage.removeItem('userData');
+            console.log("Signout successful");
+            return "Signout successful"
+        } catch (error) {
+            console.log("Error in sign out firebase", error)
+        }
+    }
 
     const uploadCategoryImage = async (file: string) => {
 
@@ -716,8 +728,103 @@ export const FirebaseProvider = ({ children }: FirebaseProviderProps) => {
         }
     }
 
+
+    // interface cateProps {
+    //     categoryName: string;
+    //     categoryCardsCount: number;
+    // }
+
+    const countOfCardsAndCategories = async (userId: string) => {
+        try {
+            const cardsRef = collection(firestore, "cards");
+            const q = query(cardsRef,
+                where("userID", "==", userId)
+            )
+            const querySnapshot = await getDocs(q);
+            const countCards = querySnapshot.size;
+            console.log("Count of cards:", countCards);
+
+            const categoriesRef = collection(firestore, "categories");
+
+            const q2 = query(categoriesRef,
+                where("userId", "==", userId)
+            )
+            const querySnapshot2 = await getDocs(q2);
+            const countCategories = querySnapshot2.size;
+            console.log("Count of categories:", countCategories);
+
+            // Query for answer_status true
+            const trueStatusQuery = query(cardsRef,
+                where("userID", "==", userId),
+                where("answer_status", "==", true)
+            );
+            const trueStatusSnapshot = await getDocs(trueStatusQuery);
+            const countCorrect = trueStatusSnapshot.size;
+            console.log("Count of cards with answer_status = true: CORRECT", countCorrect);
+
+            // Query for answer_status false
+            const falseStatusQuery = query(cardsRef,
+                where("userID", "==", userId),
+                where("answer_status", "==", false)
+            );
+            const falseStatusSnapshot = await getDocs(falseStatusQuery);
+            const countWrong = falseStatusSnapshot.size;
+            console.log("Count of cards with answer_status = false: WRONG", countWrong);
+
+            // Query for card_status good
+            const cardStatus = query(cardsRef,
+                where("userID", "==", userId),
+                where("card_status", "==", "Good")
+            );
+            const cardStatusSnap = await getDocs(cardStatus);
+            const countGood = cardStatusSnap.size;
+            console.log("Count of cards with card_status = Good", countGood);
+
+            // Query for card_status ok
+            const cardStatus2 = query(cardsRef,
+                where("userID", "==", userId),
+                where("card_status", "==", "Ok")
+            );
+            const cardStatusSnap2 = await getDocs(cardStatus2);
+            const countOk = cardStatusSnap2.size;
+            console.log("Count of cards with card_status = Ok", countOk);
+
+            // Query for card_status Bad
+            const cardStatus3 = query(cardsRef,
+                where("userID", "==", userId),
+                where("card_status", "==", "Bad")
+            );
+            const cardStatusSnap3 = await getDocs(cardStatus3);
+            const countBad = cardStatusSnap3.size;
+            console.log("Count of cards with card_status = Bad", countBad);
+
+
+            //category cards list and count
+            const querySnapshot3 = await getDocs(q2);
+
+
+            const categoriesWithCardCount = querySnapshot3.docs.map(doc => {
+                const categoryData = doc.data();
+                const categoryName = categoryData.categoryName || 'Unnamed Category';
+                const cardIds = categoryData.card_id || [];
+                const cardCount = cardIds.length;
+
+                return {
+                    "categoryName": categoryName,
+                    "categoryCards": cardCount
+                };
+            });
+
+            console.log("Categories with card counts:", categoriesWithCardCount);
+            return { "cards": countCards, "categories": countCategories, "correct": countCorrect, "wrong": countWrong, "good": countGood, "ok": countOk, "bad": countBad, "categoriesWithCardCount": categoriesWithCardCount }
+
+        } catch (error) {
+            console.log("Error in getting count", error)
+        }
+    }
+
     return (
-        <FirebaseContext.Provider value={{ signUp, signIn, addCard, fetchCategoriesByUserId, user, setUser, fetchCategoryCards, updateCardStatus, fetchAllCards, updateCard, deleteCard, updateAnswerStatus }}>
+        <FirebaseContext.Provider value={{ signUp, signIn, signOut, addCard, fetchCategoriesByUserId, user, setUser, fetchCategoryCards, updateCardStatus, fetchAllCards, updateCard, deleteCard, updateAnswerStatus, countOfCardsAndCategories }}>
             {children}
         </FirebaseContext.Provider>
     );
