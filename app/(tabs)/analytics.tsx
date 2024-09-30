@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity, ScrollView, RefreshControl, Alert } from 'react-native'
+import { View, Text, Image, TouchableOpacity, ScrollView, RefreshControl, Alert, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { icons } from '@/constants'
@@ -35,6 +35,8 @@ const Analytics = () => {
 
   const [count, setCount] = useState<countDataProps | null>(null);
 
+  const [loading, setLoading] = useState(true)
+
   const { user, countOfCardsAndCategories, setUser, signOut } = useFirebase();
 
   const fetchUserDetails = async () => {
@@ -55,12 +57,15 @@ const Analytics = () => {
   };
 
   const fetchCollectionCount = async () => {
+    setLoading(true)
     try {
       const response = await countOfCardsAndCategories(user);
       console.log(response)
       setCount(response)
     } catch (error) {
       console.error("Error fetching count", error);
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -114,82 +119,94 @@ const Analytics = () => {
             />
           </TouchableOpacity>
         </View>
-        <View className='mt-[50px]'>
-          <View className='w-[330px] h-[150px] p-5 bg-cardBg border border-secondary rounded-[10px] items-center justify-center'>
-            <View className='flex flex-row justify-around w-full'>
-              <View>
-                <Text className='text-textColor font-semibold text-base'>Quiz Status</Text>
-                <View className='mt-[10px] ml-[5px]'>
-                  <View className='flex flex-row'>
-                    <Text className='text-greenBrightBg font-medium text-base'>Correct:</Text>
-                    <Text className='text-greenBrightBg font-medium text-base ml-[5px]'>{count?.correct}</Text>
-                  </View>
-                  <View className='flex flex-row'>
-                    <Text className='text-redBrightBg font-medium text-base'>Wrong:</Text>
-                    <Text className='text-redBrightBg font-medium text-base ml-[5px]'>{count?.wrong}</Text>
-                  </View>
-                </View>
-              </View>
-              <View>
-                <Text className='text-textColor font-semibold text-base'>Learning Status</Text>
-                <View className='mt-[10px] ml-[5px]'>
-                  <View className='flex flex-row'>
-                    <Text className='text-greenBrightBg font-medium text-base'>Good:</Text>
-                    <Text className='text-greenBrightBg font-medium text-base ml-[5px]'>{count?.good}</Text>
-                  </View>
-                  <View className='flex flex-row'>
-                    <Text className='text-yellowBrightBg font-medium text-base'>Ok:</Text>
-                    <Text className='text-yellowBrightBg font-medium text-base ml-[5px]'>{count?.ok}</Text>
-                  </View>
-                  <View className='flex flex-row'>
-                    <Text className='text-redBrightBg font-medium text-base'>Bad:</Text>
-                    <Text className='text-redBrightBg font-medium text-base ml-[5px]'>{count?.bad}</Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-          </View>
-          <View className='mt-5'>
-            <Text className='text-textColor font-semibold text-base'>General Information</Text>
-            <View className='mt-[10px] ml-[5px]'>
-              <View className='flex flex-row'>
-                <Text className='text-textColor font-medium text-base'>Total Cards:</Text>
-                <Text className='text-textColor font-medium text-base ml-[5px]'>{count?.cards}</Text>
-              </View>
-              <View className='flex flex-row'>
-                <Text className='text-textColor font-medium text-base'>Total Categories:</Text>
-                <Text className='text-textColor font-medium text-base ml-[5px]'>{count?.categories}</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-        <View className='mt-5'>
-          <Text className='text-textColor font-semibold text-base'>Category Information</Text>
-          <View className='mt-[10px]'>
-            {count?.categoriesWithCardCount && (
-              <>
-                {count.categoriesWithCardCount.map((item, index) => (
-                  <View
-                    key={index}
-                    className='bg-cardBg h-[50px] mb-[10px] w-full px-5 flex flex-row items-center justify-between border-[1px] border-secondary rounded-[10px]'
-                  >
+        {!loading ?
+          (
+            <>
+              <View className='mt-[50px]'>
+                <View className='w-[330px] h-[150px] p-5 bg-cardBg border border-secondary rounded-[10px] items-center justify-center'>
+                  <View className='flex flex-row justify-around w-full'>
                     <View>
-                      <Text className='text-white font-medium text-base'>
-                        Name: {item.categoryName}
-                      </Text>
+                      <Text className='text-textColor font-semibold text-base'>Quiz Status</Text>
+                      <View className='mt-[10px] ml-[5px]'>
+                        <View className='flex flex-row'>
+                          <Text className='text-greenBrightBg font-medium text-base'>Correct:</Text>
+                          <Text className='text-greenBrightBg font-medium text-base ml-[5px]'>{count?.correct}</Text>
+                        </View>
+                        <View className='flex flex-row'>
+                          <Text className='text-redBrightBg font-medium text-base'>Wrong:</Text>
+                          <Text className='text-redBrightBg font-medium text-base ml-[5px]'>{count?.wrong}</Text>
+                        </View>
+                      </View>
                     </View>
-                    <View className='ml-5'>
-                      <Text className='text-white font-medium text-base'>
-                        Cards: {item.categoryCards}
-                      </Text>
+                    <View>
+                      <Text className='text-textColor font-semibold text-base'>Learning Status</Text>
+                      <View className='mt-[10px] ml-[5px]'>
+                        <View className='flex flex-row'>
+                          <Text className='text-greenBrightBg font-medium text-base'>Good:</Text>
+                          <Text className='text-greenBrightBg font-medium text-base ml-[5px]'>{count?.good}</Text>
+                        </View>
+                        <View className='flex flex-row'>
+                          <Text className='text-yellowBrightBg font-medium text-base'>Ok:</Text>
+                          <Text className='text-yellowBrightBg font-medium text-base ml-[5px]'>{count?.ok}</Text>
+                        </View>
+                        <View className='flex flex-row'>
+                          <Text className='text-redBrightBg font-medium text-base'>Bad:</Text>
+                          <Text className='text-redBrightBg font-medium text-base ml-[5px]'>{count?.bad}</Text>
+                        </View>
+                      </View>
                     </View>
                   </View>
-                ))}
-              </>
-            )}
+                </View>
+                <View className='mt-5'>
+                  <Text className='text-textColor font-semibold text-base'>General Information</Text>
+                  <View className='mt-[10px] ml-[5px]'>
+                    <View className='flex flex-row'>
+                      <Text className='text-textColor font-medium text-base'>Total Cards:</Text>
+                      <Text className='text-textColor font-medium text-base ml-[5px]'>{count?.cards}</Text>
+                    </View>
+                    <View className='flex flex-row'>
+                      <Text className='text-textColor font-medium text-base'>Total Categories:</Text>
+                      <Text className='text-textColor font-medium text-base ml-[5px]'>{count?.categories}</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+              <View className='mt-5'>
+                <Text className='text-textColor font-semibold text-base'>Category Information</Text>
+                <ScrollView className='mt-[10px] h-[310px]'>
+                  {count?.categoriesWithCardCount && (
+                    <>
+                      {count.categoriesWithCardCount.map((item, index) => (
+                        <View
+                          key={index}
+                          className='bg-cardBg h-[50px] mb-[10px] w-full px-5 flex flex-row items-center justify-between border-[1px] border-secondary rounded-[10px]'
+                        >
+                          <View>
+                            <Text className='text-white font-medium text-base'>
+                              Name: {item.categoryName}
+                            </Text>
+                          </View>
+                          <View className='ml-5'>
+                            <Text className='text-white font-medium text-base'>
+                              Cards: {item.categoryCards}
+                            </Text>
+                          </View>
+                        </View>
+                      ))}
+                    </>
+                  )}
 
-          </View>
-        </View>
+                </ScrollView>
+              </View>
+            </>
+          ) : (
+            <View className='h-[665px]'>
+              <View className="flex-1 justify-center items-center">
+                <ActivityIndicator size="large" color="#124D87" />
+              </View>
+            </View>
+          )
+        }
       </ScrollView>
     </SafeAreaView>
   )
