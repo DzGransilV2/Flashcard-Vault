@@ -13,11 +13,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "googleServicesFile":"./GoogleService-Info.plist",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "supportsTablet": true
     },
     "android": {
-      "googleServicesFile":"google-services.json",
+      "googleServicesFile": "google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -36,14 +36,19 @@
       [
         "expo-build-properties",
         {
-          "ios":{
-            "useFrameworks":"static"
+          "ios": {
+            "useFrameworks": "static"
           }
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d59f7af1-5ccb-4d81-ab63-1644b9a05931"
+      }
     }
   }
 }
