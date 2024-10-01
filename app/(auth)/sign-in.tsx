@@ -52,11 +52,14 @@ const SignIn = () => {
         <SafeAreaView className="bg-primary h-full">
             <ScrollView>
                 <View className="w-full min-h-[85vh] justify-center px-4 my-6">
-                    <Text className="text-2xl text-white mt-10 font-psemibold">Login to FlashCard Vault</Text>
+                    <View className='w-full items-center justify-center mb-5'>
+                        <Text className="text-2xl text-white mt-10 font-psemibold">Login to FlashCard Vault</Text>
+                    </View>
                     <FormField
                         fieldHeading='Email'
                         placeholder='Type your email here...'
                         handleChange={handleEmailChange}
+                        containerStyle='mb-5'
                     />
                     <FormField
                         fieldHeading='Password'

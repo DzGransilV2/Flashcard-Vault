@@ -34,7 +34,7 @@ const SignUp = () => {
         setForm({ ...form, password: text });
     };
 
-    const {signUp} = useFirebase();
+    const { signUp } = useFirebase();
 
     const submit = async () => {
         if (!form.email || !form.password || !form.username) {
@@ -42,35 +42,39 @@ const SignUp = () => {
             return
         }
         setIsSubmitting(true)
-        try{
-          const result = await signUp({ email: form.email, password: form.password, username: form.username });
-          console.log("Signup success",result.user.displayName)
-        //   setUser(result);
-        //   setIsLoggedIn(true);
-          router.replace('/sign-in');
-          Alert.alert("Success", "Signned up successfully");
-        }catch(error){
-          Alert.alert('Error', 'Got error in signUp but client side');
-          console.log("Error:", error)
-        }finally{
-          setIsSubmitting(false)
-        } 
+        try {
+            const result = await signUp({ email: form.email, password: form.password, username: form.username });
+            console.log("Signup success", result.user.displayName)
+            //   setUser(result);
+            //   setIsLoggedIn(true);
+            router.replace('/sign-in');
+            Alert.alert("Success", "Signned up successfully");
+        } catch (error) {
+            Alert.alert('Error', 'Got error in signUp but client side');
+            console.log("Error:", error)
+        } finally {
+            setIsSubmitting(false)
+        }
     }
 
     return (
         <SafeAreaView className="bg-primary h-full">
             <ScrollView>
                 <View className="w-full min-h-[85vh] justify-center px-4 my-6">
-                    <Text className="text-2xl text-white mt-10 font-psemibold">Sign up to FlashCard Vault</Text>
+                    <View className='w-full items-center justify-center mb-5'>
+                        <Text className="text-2xl text-white mt-10 font-psemibold">Sign up to FlashCard Vault</Text>
+                    </View>
                     <FormField
                         fieldHeading='Username'
                         placeholder='Type your username here...'
                         handleChange={handleUsernameChange}
+                        containerStyle='mb-5'
                     />
                     <FormField
                         fieldHeading='Email'
                         placeholder='Type your email here...'
                         handleChange={handleEmailChange}
+                        containerStyle='mb-5'
                     />
                     <FormField
                         fieldHeading='Password'
