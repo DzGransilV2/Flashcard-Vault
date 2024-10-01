@@ -24,6 +24,8 @@ const Home = () => {
   const { fetchCategoriesByUserId, user } = useFirebase();
   const [data, setData] = useState<DropdownItem[]>([]);
 
+  const [filteredData, setFilteredData] = useState<DropdownItem[]>([]);
+  const [query, setQuery] = useState('');
 
   const fetchCategories = async () => {
     if (user) {
@@ -33,6 +35,7 @@ const Home = () => {
         value: [category.category_id, category.categoryImage]
       }));
       setData(dropdownData);
+      setFilteredData(dropdownData);
     }
   };
 
@@ -41,6 +44,19 @@ const Home = () => {
     // console.log(data);
     // console.log("USER HOME:",user);
   }, [user]);
+
+
+  useEffect(() => {
+    // Filter the data based on the search query
+    if (query) {
+      const filtered = data.filter((item) =>
+        item.label.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(data);  // Reset to all categories when query is empty
+    }
+  }, [query, data]);
 
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -56,7 +72,7 @@ const Home = () => {
         {/*Below was ScrollView but change to View*/}
         <View className='h-full mx-[40px]'>
           <View className='mt-10'>
-            <SearchComponent />
+            <SearchComponent query={query} setQuery={setQuery} />
           </View>
           {/* <View className='mt-[30px] mb'>
             <Text className='text-textColor text-xl font-semibold'>Categories</Text>
@@ -67,7 +83,7 @@ const Home = () => {
                 <CategoryCard key={index} category_image={item.value[1]} category_name={item.label} />
               ))} */}
             <FlatList
-              data={data}
+              data={filteredData}
               keyExtractor={(item) => item.value[0]}
               renderItem={({ item }) => (
                 <CategoryCard

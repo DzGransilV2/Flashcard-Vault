@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, RefreshControl } from 'react-native'
+import { View, Text, ScrollView, RefreshControl, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import SearchComponent from '@/components/SearchComponent'
@@ -14,64 +14,95 @@ interface Card {
   category_id: string;
   keywords: string;
   question: string;
-  userID: string
+  userID: string;
 }
 
-
 const Edit = () => {
-
   const { user, fetchAllCards } = useFirebase();
 
   const [data, setData] = useState<Card[]>([]);
+  const [filteredData, setFilteredData] = useState<Card[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState('');
 
+  // Fetch all cards for the user
   const fetchData = async () => {
+    setLoading(true);
     try {
       const response = await fetchAllCards(user);
-      setData(response)
+      setData(response);
+      setFilteredData(response); // Initialize with all data
     } catch (error) {
-      console.log(error)
+      console.log(error);
     } finally {
-
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     fetchData();
-  }, [user, data])
+  }, [user]);
 
-  const [refreshing, setRefreshing] = React.useState(false);
+  // Filter cards based on the search query
+  useEffect(() => {
+    if (query) {
+      const filtered = data.filter((item) =>
+        // Check if the query matches the question or keywords (case insensitive)
+        item.question.toLowerCase().includes(query.toLowerCase()) ||
+        item.keywords.toLowerCase().includes(query.toLowerCase()) ||
+        item.answer.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(data); // Reset to all cards when query is empty
+    }
+  }, [query, data]);
+
+  const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchData();
     setRefreshing(false);
-  }
+  };
 
   return (
-    <SafeAreaView className='h-full bg-primary'>
-      <View className='mx-[40px]'>
-        <View className='mt-10'>
-          <SearchComponent />
+    <SafeAreaView className="h-full bg-primary">
+      <View className="h-full mx-[40px]">
+        <View className="mt-10">
+          {/* Search component */}
+          <SearchComponent query={query} setQuery={setQuery} />
         </View>
-        <Text className='text-textColor mt-[30px] text-xl font-semibold'>Edit Cards</Text>
-        <ScrollView
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-          className='mt-5 h-[589px]'>
-          {
-            data.length > 0 ? (
-              data.map((item, index) => (
-                <EditCard key={index} item={item} />
-              ))) : (
-              <EmptyState
-                title='No cards found'
-                subtitle='Start your learning journey by adding your first flashcard!'
-              />
+        <Text className="text-textColor mt-[30px] text-xl font-semibold">Edit Cards</Text>
+        {
+          !loading ?
+            (
+              <ScrollView
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                className="mt-5 h-[589px]"
+              >
+                {filteredData.length > 0 ? (
+                  filteredData.map((item, index) => (
+                    <EditCard key={index} item={item} />
+                  ))
+                ) : (
+                  <EmptyState
+                    title="No cards found"
+                    subtitle="Start your learning journey by adding your first flashcard!"
+                  />
+                )}
+              </ScrollView>
+            ) : (
+              <View className='h-[600px]'>
+                <View className="flex-1 justify-center items-center">
+                  <ActivityIndicator size="large" color="#124D87" />
+                </View>
+              </View>
             )
-          }
-        </ScrollView>
+        }
       </View>
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default Edit
+export default Edit;

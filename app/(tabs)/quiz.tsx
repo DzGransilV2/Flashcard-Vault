@@ -27,6 +27,9 @@ const Quiz = () => {
   const { fetchCategoriesByUserId, user } = useFirebase();
   const [data, setData] = useState<DropdownItem[]>([]);
 
+  const [filteredData, setFilteredData] = useState<DropdownItem[]>([]);
+  const [query, setQuery] = useState('');
+
 
   const fetchCategories = async () => {
     if (user) {
@@ -36,6 +39,7 @@ const Quiz = () => {
         value: [category.category_id, category.categoryImage]
       }));
       setData(dropdownData);
+      setFilteredData(dropdownData);
     }
   };
 
@@ -44,6 +48,18 @@ const Quiz = () => {
     console.log("DATA:::", data);
     console.log("USER QUIZ:::", user);
   }, [user]);
+
+  useEffect(() => {
+    // Filter the data based on the search query
+    if (query) {
+      const filtered = data.filter((item) =>
+        item.label.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(data);  // Reset to all categories when query is empty
+    }
+  }, [query, data]);
 
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -57,11 +73,11 @@ const Quiz = () => {
     <SafeAreaView className='h-full bg-primary'>
       <View className='h-full mx-[40px]'>
         <View className='mt-10'>
-          <SearchComponent />
+          <SearchComponent query={query} setQuery={setQuery} />
         </View>
         <View className='flex flex-row flex-wrap justify-between w-full'>
           <FlatList
-            data={data}
+            data={filteredData}
             keyExtractor={(item) => item.value[0]}
             renderItem={({ item }) => (
               <QuizCategoryCard

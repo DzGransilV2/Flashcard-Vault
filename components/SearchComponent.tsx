@@ -2,9 +2,14 @@ import { View, Text, Image, TouchableOpacity, TextInput, Alert } from 'react-nat
 import React, { useState } from 'react'
 import { icons } from '@/constants'
 
-const SearchComponent = () => {
+interface queryProps {
+    query: string;
+    setQuery: (query: string) => void;
+}
 
-    const [query, setQuery] = useState('');
+const SearchComponent: React.FC<queryProps> = ({ query, setQuery }) => {
+
+    // const [query, setQuery] = useState('');
 
     return (
         <View className='h-[53px] w-[330px] items-center justify-between rounded-[10px] px-5 border-[1px] border-secondary focus:border-activeColor flex-row'>
@@ -18,8 +23,8 @@ const SearchComponent = () => {
             />
             <TouchableOpacity
                 activeOpacity={0.7}
-                onPress={()=>{
-                    if(!query){
+                onPress={() => {
+                    if (!query) {
                         return Alert.alert('Missing Query', "Please input something to search");
                     }
                 }}

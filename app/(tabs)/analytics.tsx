@@ -95,7 +95,7 @@ const Analytics = () => {
   }
 
   return (
-    <SafeAreaView className='h-full bg-primary'>
+    <SafeAreaView className='h-full bg-primary '>
       <ScrollView
         className='h-full mx-[40px]'
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
@@ -173,7 +173,7 @@ const Analytics = () => {
               </View>
               <View className='mt-5'>
                 <Text className='text-textColor font-semibold text-base'>Category Information</Text>
-                <ScrollView className='mt-[10px] h-[310px]'>
+                <ScrollView className='mt-[10px] h-[308px]'>
                   {count?.categoriesWithCardCount && (
                     <>
                       {count.categoriesWithCardCount.map((item, index) => (
