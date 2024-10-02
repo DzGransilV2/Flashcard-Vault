@@ -48,8 +48,8 @@ export default function App() {
                         <CustomBtn
                             title="Continue with Email"
                             handlePress={() => router.push('/sign-in')}
-                            containerStyle="w-[230px] h-[50px]"
-                            textStyles='text-xl'
+                            containerStyle="w-[230px] h-[50px] border border-activeColor"
+                            textStyles='text-xl text-activeColor'
                         />
                     </View>
                     <Text className='text-textColor font-normal text-xm absolute bottom-5'>Created by DzGransil</Text>
