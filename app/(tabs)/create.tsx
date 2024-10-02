@@ -111,9 +111,9 @@ const Create = () => {
     <SafeAreaView className='h-full bg-primary border'>
       <ScrollView className='h-full mx-[40px] gap-y-[5px]' showsVerticalScrollIndicator={false}>
         <View>
-          <Text className='text-textColor mt-[30px] text-xl font-semibold'>Create Card</Text>
+          <Text className='text-textColor mt-[30px] mb-5 text-xl font-semibold'>Create Card</Text>
         </View>
-        <View className=''>
+        <View>
           <View className='gap-y-5'>
             <View>
               <FormField

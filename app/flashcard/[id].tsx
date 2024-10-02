@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity, TouchableWithoutFeedback, Animated, Dimensions, Alert, ActivityIndicator, RefreshControl, ScrollView } from 'react-native'
+import { View, Text, Image, TouchableOpacity, TouchableWithoutFeedback, Animated, Dimensions, Alert, ActivityIndicator, RefreshControl, ScrollView, useWindowDimensions } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -130,10 +130,48 @@ const Flashcard = () => {
     setRefreshing(false);
   }
 
-  const windowWidth = Dimensions.get("window").width;
-  const windowHeight = Dimensions.get("window").height;
+  const { width: initialWidth, height: initialHeight } = Dimensions.get('window');
 
-  console.log(windowHeight, windowWidth)
+  const [windowDimensions, setWindowDimensions] = useState({
+    width: initialWidth,
+    height: initialHeight,
+  });
+
+  useEffect(() => {
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
+      setWindowDimensions({
+        width: window.width,
+        height: window.height,
+      });
+    });
+    return () => {
+      subscription?.remove();
+    };
+  }, []);
+
+  const { width, height } = windowDimensions;
+
+  // const windowWidth = Dimensions.get("window").width;
+  // const windowHeight = Dimensions.get("window").height;
+
+  // const { width, height } = useWindowDimensions();
+
+  const cardHeight = height > 800 ? 'h-[330]' : 'h-[250]';
+  const cardWidth = width > 400 ? 'w-[330]' : 'w-[250]';
+  const marginTop = height > 800 ? 'mt-[100]' : 'mt-[50]';
+  const heightBase = height > 800 ? 'h-[550px]' : 'h-[500px]'
+
+  const smallRectW = width > 400 ? 'w-[75]' : 'w-[50]';
+  const smallRectH = height > 800 ? 'h-[26]' : 'h-[23]';
+
+  const smallRectBaseW = width > 400 ? 'w-[330]' : 'w-[250]';
+  const smallRectBaseH = height > 800 ? 'h-[50]' : 'h-[35]';
+
+
+  const arrowW = width > 400 ? 'w-[100]' : 'w-[75]';
+  const arrowH = height > 800 ? 'h-[35]' : 'h-[25]';
+
+  // console.log("Height:", height, "Width:", width)
 
   return (
     <SafeAreaView className='bg-primary h-full '>
@@ -145,25 +183,25 @@ const Flashcard = () => {
         }
       >
         {/* <View className='h-full mx-[40px]'> */}
-        <View className={`items-center justify-center mt-[${windowHeight > 800 ? '100px' : '50px'}]`}>
+        <View className={`items-center justify-center ${marginTop}`}>
           <Text className='text-textColor font-semibold text-xl'>{category_name}</Text>
         </View>
         {
           !loading ? (
-            <View className={`h-[${windowHeight > 800 ? '550px' : '500px'}] items-center justify-center`}>
+            <View className={`${heightBase} items-center justify-center`}>
               {currentCard && (
                 <View >
                   <TouchableWithoutFeedback onPress={flipCard}>
                     <View className='items-center'>
                       {/* Front Card */}
                       <Animated.View
-                        className={`h-[${windowHeight > 800 ? '330px' : '250px'}] w-[${windowWidth > 400 ? '330px' : '250px'}] bg-cardBg border border-secondary rounded-[10px] items-center justify-center mb-[10px] p-5`}
+                        className={`${cardHeight} ${cardWidth} bg-cardBg border border-secondary rounded-[10px] items-center justify-center mb-[10px] p-5`}
                         style={[{ backfaceVisibility: 'hidden' }, { transform: [{ rotateY: frontInterpolate }] }]}>
                         <Text className='text-textColor text-center font-bold text-3xl'>{currentCard.question}</Text>
                       </Animated.View>
                       {/* Back Card */}
                       <Animated.View
-                        className={`absolute h-[${windowHeight > 800 ? '330px' : '250px'}] w-[${windowWidth > 400 ? '330px' : '250px'}] bg-cardBg border border-secondary rounded-[10px] items-center justify-center mb-[10px] p-5`}
+                        className={`absolute ${cardHeight} ${cardWidth} bg-cardBg border border-secondary rounded-[10px] items-center justify-center mb-[10px] p-5`}
                         style={[
                           { backfaceVisibility: 'hidden' },
                           { transform: [{ rotateY: backInterpolate }] },
@@ -175,22 +213,22 @@ const Flashcard = () => {
                   </TouchableWithoutFeedback>
                 </View>
               )}
-              <View className={`flex flex-row w-[${windowWidth > 400 ? '330px' : '250px'}] h-[${windowHeight > 800 ? '50px' : '35px'}] items-center justify-evenly bg-cardBg rounded-[10px] border border-secondary mb-[10px]`}>
+              <View className={`flex flex-row ${smallRectBaseH} ${smallRectBaseW} items-center justify-evenly bg-cardBg rounded-[10px] border border-secondary mb-[10px]`}>
                 <TouchableOpacity
                   onPress={() => updateStatus(currentCard.card_id, 'Bad')}
-                  className={`w-[${windowWidth > 400 ? '75px' : '50px'}] h-[${windowHeight > 800 ? '26px' : '23px'}] ${currentCard.card_status === 'Bad' ? 'bg-redBrightBg' : 'bg-redBg'}  rounded-[10px] items-center justify-center`}
+                  className={`${smallRectW} ${smallRectH} ${currentCard.card_status === 'Bad' ? 'bg-redBrightBg' : 'bg-redBg'}  rounded-[10px] items-center justify-center`}
                   activeOpacity={0.7}>
                   <Text className='text-textColor font-medium text-xs'>Bad</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => updateStatus(currentCard.card_id, 'Ok')}
-                  className={`w-[${windowWidth > 400 ? '75px' : '50px'}] h-[${windowHeight > 800 ? '26px' : '23px'}] ${currentCard.card_status === 'Ok' ? 'bg-yellowBrightBg' : 'bg-yellowBg'}  rounded-[10px] items-center justify-center`}
+                  className={`${smallRectW} ${smallRectH} ${currentCard.card_status === 'Ok' ? 'bg-yellowBrightBg' : 'bg-yellowBg'}  rounded-[10px] items-center justify-center`}
                   activeOpacity={0.7}>
                   <Text className='text-textColor font-medium text-xs'>Ok</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => updateStatus(currentCard.card_id, 'Good')}
-                  className={`w-[${windowWidth > 400 ? '75px' : '50px'}] h-[${windowHeight > 800 ? '26px' : '23px'}] ${currentCard.card_status === 'Good' ? 'bg-greenBrightBg' : 'bg-greenBg'}  rounded-[10px] items-center justify-center`}
+                  className={`${smallRectW} ${smallRectH} ${currentCard.card_status === 'Good' ? 'bg-greenBrightBg' : 'bg-greenBg'}  rounded-[10px] items-center justify-center`}
                   activeOpacity={0.7}>
                   <Text className='text-textColor font-medium text-xs'>Good</Text>
                 </TouchableOpacity>
@@ -200,7 +238,7 @@ const Flashcard = () => {
                 <TouchableOpacity
                   onPress={handleBack}
                   disabled={currentCardIndex === 0}
-                  className={`w-[${windowWidth > 400 ? '100px' : '75px'}] h-[${windowHeight > 800 ? '35px' : '25px'}] bg-cardBg ${currentCardIndex === 0 ? '' : 'border border-secondary'} rounded-[10px] items-center justify-center`} activeOpacity={0.7}>
+                  className={`${arrowW} ${arrowH} bg-cardBg ${currentCardIndex === 0 ? '' : 'border border-secondary'} rounded-[10px] items-center justify-center`} activeOpacity={0.7}>
                   <Image
                     className='w-6 h-6 rotate-180'
                     source={icons.arrow}
@@ -211,7 +249,7 @@ const Flashcard = () => {
                 <TouchableOpacity
                   onPress={handleNext}
                   disabled={currentCardIndex === data.length - 1}
-                  className={`w-[${windowWidth > 400 ? '100px' : '75px'}] h-[${windowHeight > 800 ? '35px' : '25px'}] bg-cardBg ${currentCardIndex === data.length - 1 ? '' : 'border border-secondary'} rounded-[10px] items-center justify-center`} activeOpacity={0.7}>
+                  className={`${arrowW} ${arrowH} bg-cardBg ${currentCardIndex === data.length - 1 ? '' : 'border border-secondary'} rounded-[10px] items-center justify-center`} activeOpacity={0.7}>
                   <Image
                     className='w-6 h-6'
                     source={icons.arrow}

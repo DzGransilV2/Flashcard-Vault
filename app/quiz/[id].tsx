@@ -152,10 +152,37 @@ const QuizScreen = () => {
         setRefreshing(false);
     }
 
-    const windowWidth = Dimensions.get("window").width;
-    const windowHeight = Dimensions.get("window").height;
+    const { width: initialWidth, height: initialHeight } = Dimensions.get('window');
 
-    console.log(windowHeight, windowWidth)
+    const [windowDimensions, setWindowDimensions] = useState({
+        width: initialWidth,
+        height: initialHeight,
+    });
+
+    useEffect(() => {
+        const subscription = Dimensions.addEventListener('change', ({ window }) => {
+            setWindowDimensions({
+                width: window.width,
+                height: window.height,
+            });
+        });
+        return () => {
+            subscription?.remove();
+        };
+    }, []);
+
+    const { width, height } = windowDimensions;
+
+    const cardHeight = height > 800 ? 'h-[330]' : 'h-[250]';
+    const cardWidth = width > 400 ? 'w-[330]' : 'w-[250]';
+    const marginTop = height > 800 ? 'mt-[100]' : 'mt-[50]';
+    const heightBase = height > 800 ? 'h-[550px]' : 'h-[500px]'
+
+    const btnW = width > 400 ? 'w-[100]' : 'w-[90]';
+    const btnH = height > 800 ? 'h-[45]' : 'h-[35]';
+
+    const arrowW = width > 400 ? 'w-[100]' : 'w-[75]';
+    const arrowH = height > 800 ? 'h-[35]' : 'h-[25]';
 
     return (
         <SafeAreaView className='h-full bg-primary'>
@@ -166,25 +193,25 @@ const QuizScreen = () => {
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 }
             >
-                <View className={`items-center justify-center mt-[${windowHeight > 800 ? '100px' : '50px'}]`}>
+                <View className={`items-center justify-center ${marginTop}`}>
                     <Text className='text-textColor font-semibold text-xl'>{category_name} Quiz</Text>
                 </View>
                 {
                     !loading ? (
-                        <View className={`h-[${windowHeight > 800 ? '550px' : '500px'}] items-center justify-center`}>
+                        <View className={`${heightBase} items-center justify-center`}>
                             {currentCard && (
                                 <View >
                                     <TouchableWithoutFeedback onPress={flipCard}>
                                         <View>
                                             {/* Front Card */}
                                             <Animated.View
-                                                className={`h-[${windowHeight > 800 ? '330px' : '250px'}] w-[${windowWidth > 400 ? '330px' : '250px'}] bg-cardBg border ${correct === true ? 'border-greenBrightBg' : correct === false ? 'border-redBrightBg' : 'border-secondary'} rounded-[10px] items-center justify-center mb-[10px] p-5`}
+                                                className={`${cardHeight} ${cardWidth} bg-cardBg border ${correct === true ? 'border-greenBrightBg' : correct === false ? 'border-redBrightBg' : 'border-secondary'} rounded-[10px] items-center justify-center mb-[10px] p-5`}
                                                 style={[{ backfaceVisibility: 'hidden' }, { transform: [{ rotateY: frontInterpolate }] }]}>
                                                 <Text className='text-textColor text-center font-bold text-3xl'>{currentCard.question}</Text>
                                             </Animated.View>
                                             {/* Back Card */}
                                             <Animated.View
-                                                className={`absolute h-[${windowHeight > 800 ? '330px' : '250px'}] w-[${windowWidth > 400 ? '330px' : '250px'}] bg-cardBg border ${correct === true ? 'border-greenBrightBg' : correct === false ? 'border-redBrightBg' : 'border-secondary'} rounded-[10px] items-center justify-center mb-[10px] p-5`}
+                                                className={`absolute ${cardHeight} ${cardWidth} bg-cardBg border ${correct === true ? 'border-greenBrightBg' : correct === false ? 'border-redBrightBg' : 'border-secondary'} rounded-[10px] items-center justify-center mb-[10px] p-5`}
                                                 style={[
                                                     { backfaceVisibility: 'hidden' },
                                                     { transform: [{ rotateY: backInterpolate }] },
@@ -225,7 +252,7 @@ const QuizScreen = () => {
                                 {!isChecked ? (
                                     <CustomBtn
                                         title='Check'
-                                        containerStyle={`w-[${windowWidth > 400 ? '100px' : '85px'}] h-[${windowHeight > 800 ? '45px' : '35px'}] px-5`}
+                                        containerStyle={`${btnH} ${btnW} px-5`}
                                         textStyles='text-base'
                                         handlePress={checkAnswer}
                                         isLoading={!isFlipped}
@@ -234,7 +261,7 @@ const QuizScreen = () => {
                                     <TouchableOpacity
                                         onPress={handleNext}
                                         disabled={currentCardIndex === data.length - 1}
-                                        className={`w-[${windowWidth > 400 ? '100px' : '75px'}] h-[${windowHeight > 800 ? '35px' : '25px'}] bg-cardBg ${currentCardIndex === data.length - 1 ? '' : 'border border-secondary'} rounded-[10px] items-center justify-center`}
+                                        className={`${arrowW} ${arrowH} bg-cardBg ${currentCardIndex === data.length - 1 ? '' : 'border border-secondary'} rounded-[10px] items-center justify-center`}
                                         activeOpacity={0.7}
                                     >
                                         <Image
