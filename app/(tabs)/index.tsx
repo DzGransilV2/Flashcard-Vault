@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, FlatList, RefreshControl } from 'react-native'
+import { View, Text, FlatList, RefreshControl } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { StatusBar } from 'expo-status-bar'
@@ -68,21 +68,14 @@ const Home = () => {
 
   return (
     <>
-      <SafeAreaView className='h-full bg-primary'>
-        {/*Below was ScrollView but change to View*/}
+      <SafeAreaView className='h-[calc(100%-84px)] bg-primary'>
         <View className='h-full mx-[40px]'>
           <View className='mt-10'>
             <SearchComponent query={query} setQuery={setQuery} />
           </View>
-          {/* <View className='mt-[30px] mb'>
-            <Text className='text-textColor text-xl font-semibold'>Categories</Text>
-          </View> */}
-          {/* <ScrollView className='h-[610px] w-full'> */}
-          <View className='flex flex-row flex-wrap justify-between w-full'>
-            {/* {data.map((item, index) => (
-                <CategoryCard key={index} category_image={item.value[1]} category_name={item.label} />
-              ))} */}
+          <View className='flex flex-col flex-grow'>
             <FlatList
+              showsVerticalScrollIndicator={false}
               data={filteredData}
               keyExtractor={(item) => item.value[0]}
               renderItem={({ item }) => (
@@ -104,12 +97,11 @@ const Home = () => {
                 </View>
               )}
               numColumns={2} // Specify the number of columns
-              columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: 10 }} // Add spacing between columns
+              columnWrapperStyle={{ justifyContent: 'space-around', marginBottom: 10 }} // Add spacing between columns
               refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-              style={{ flex: 1, height: 666 }}
+              style={{ flex: 1 }}
             />
           </View>
-          {/* </ScrollView> */}
         </View>
       </SafeAreaView>
       <StatusBar

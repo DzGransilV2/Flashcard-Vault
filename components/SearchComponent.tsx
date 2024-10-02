@@ -12,7 +12,7 @@ const SearchComponent: React.FC<queryProps> = ({ query, setQuery }) => {
     // const [query, setQuery] = useState('');
 
     return (
-        <View className='h-[53px] w-[330px] items-center justify-between rounded-[10px] px-5 border-[1px] border-secondary focus:border-activeColor flex-row'>
+        <View className='h-[53px] w-full max-w-[330px] items-center justify-between rounded-[10px] px-5 border-[1px] border-secondary focus:border-activeColor flex-row'>
             {/* <Text className='text-secondary'>Type here to search...</Text> */}
             <TextInput
                 className="text-base text-white flex-1"

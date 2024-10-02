@@ -28,16 +28,16 @@ const ImagePickerCard = ({ setImageVerify }: ImageProps) => {
   };
 
   return (
-    <View className='items-center justify-center gap-3'>
+    <>
       <TouchableOpacity
         onPress={pickImage}
-        className='bg-cardBg border border-secondary w-[330px] rounded-lg px-4 py-2 mt-4 mb-[10px] items-center justify-center'
+        className='bg-cardBg border border-secondary w-full max-w-[330px] rounded-lg px-4 py-2 mt-[10px] mb-[10px] items-center justify-center'
       >
         <Text className='text-secondary text-sm font-medium'>Tap here to choose Image</Text>
       </TouchableOpacity>
       {image &&
         <>
-          <Text className='text-textColor font-medium text-base w-[320px]'>Preview</Text>
+          <Text className='text-textColor font-medium text-base w-[320px] mb-[10px]'>Preview</Text>
           <Image
             source={{ uri: image }}
             className='h-[100px] w-[100px] rounded-[10px]'
@@ -45,7 +45,7 @@ const ImagePickerCard = ({ setImageVerify }: ImageProps) => {
           />
         </>
       }
-    </View>
+    </>
   )
 }
 

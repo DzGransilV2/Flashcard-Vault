@@ -77,8 +77,8 @@ const EditCard: React.FC<EditCardProps> = ({ item }) => {
 
             {!loading ? (
                 <>
-                    <View className='w-[187px] gap-1'>
-                        <Text className='text-white font-medium text-xl'>{item.question}</Text>
+                    <View className='w-3/4 gap-1'>
+                        <Text numberOfLines={1} className='text-white font-medium text-xl'>{item.question}</Text>
                         <Text numberOfLines={1} className='text-white font-normal text-xs'>{item.answer}</Text>
                     </View>
                     <View className='flex flex-row gap-5'>

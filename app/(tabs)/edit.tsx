@@ -78,6 +78,7 @@ const Edit = () => {
           !loading ?
             (
               <ScrollView
+                showsVerticalScrollIndicator={false}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 className="mt-5 h-[589px]"
               >

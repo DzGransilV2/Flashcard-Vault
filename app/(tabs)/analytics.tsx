@@ -95,10 +95,12 @@ const Analytics = () => {
   }
 
   return (
-    <SafeAreaView className='h-full bg-primary '>
+    <SafeAreaView className='h-full bg-primary border'>
       <ScrollView
         className='h-full mx-[40px]'
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        showsVerticalScrollIndicator={false}
+      >
         <View className='flex flex-row items-center justify-between mt-10'>
           <View>
             {data ? (
@@ -123,7 +125,7 @@ const Analytics = () => {
           (
             <>
               <View className='mt-[50px]'>
-                <View className='w-[330px] h-[150px] p-5 bg-cardBg border border-secondary rounded-[10px] items-center justify-center'>
+                <View className='w-full max-w-[330px] h-[150px] p-5 bg-cardBg border border-secondary rounded-[10px] items-center justify-center'>
                   <View className='flex flex-row justify-around w-full'>
                     <View>
                       <Text className='text-textColor font-semibold text-base'>Quiz Status</Text>
@@ -173,7 +175,7 @@ const Analytics = () => {
               </View>
               <View className='mt-5'>
                 <Text className='text-textColor font-semibold text-base'>Category Information</Text>
-                <ScrollView className='mt-[10px] h-[308px]'>
+                <View className='mt-[10px] flex flex-col flex-grow'>
                   {count?.categoriesWithCardCount && (
                     <>
                       {count.categoriesWithCardCount.map((item, index) => (
@@ -196,7 +198,7 @@ const Analytics = () => {
                     </>
                   )}
 
-                </ScrollView>
+                </View>
               </View>
             </>
           ) : (

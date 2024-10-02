@@ -70,13 +70,14 @@ const Quiz = () => {
   }
 
   return (
-    <SafeAreaView className='h-full bg-primary'>
+    <SafeAreaView className='h-[calc(100%-84px)] bg-primary'>
       <View className='h-full mx-[40px]'>
         <View className='mt-10'>
           <SearchComponent query={query} setQuery={setQuery} />
         </View>
-        <View className='flex flex-row flex-wrap justify-between w-full'>
+        <View className='flex flex-col flex-grow'>
           <FlatList
+            showsVerticalScrollIndicator={false}
             data={filteredData}
             keyExtractor={(item) => item.value[0]}
             renderItem={({ item }) => (
@@ -99,7 +100,7 @@ const Quiz = () => {
             )}
             numColumns={1}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-            style={{ flex: 1, height: 666 }}
+            style={{ flex: 1 }}
           />
         </View>
       </View>

@@ -172,22 +172,22 @@ const Update = () => {
 
     return (
         <SafeAreaView className="h-full bg-primary">
-            <ScrollView className="h-full mx-[40px] gap-y-[5px]">
+            <ScrollView className="h-full mx-[40px] gap-y-[5px]" showsVerticalScrollIndicator={false}>
                 <View>
                     <Text className="text-textColor mt-[30px] text-xl font-semibold">
                         Edit Card
                     </Text>
                 </View>
-                <View className="gap-y-5 h-full">
+                <View className="h-full gap-y-5">
                     {!loading ? (
                         <>
-                            <ScrollView className="gap-y-5">
+                            <View className="gap-y-5">
                                 <View>
                                     <FormField
                                         fieldHeading="Question"
                                         placeholder="Type question here...."
                                         handleChange={handleQuestionChange}
-                                        value={form.question} // Controlled by form state
+                                        value={form.question}
                                     />
                                 </View>
                                 <View>
@@ -252,13 +252,13 @@ const Update = () => {
                                             <CustomBtn
                                                 title="Update"
                                                 handlePress={submit}
-                                                containerStyle="w-[130px] h-[50px]"
+                                                containerStyle="w-[130px] h-[50px] mb-5"
                                                 textStyles="text-xl"
                                                 isLoading={isSubmitting}
                                             />
                                         </View>
                                     )}
-                            </ScrollView>
+                            </View>
                         </>
                     ) : (
                         <View className="h-[700px]">

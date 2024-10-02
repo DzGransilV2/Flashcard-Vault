@@ -63,7 +63,7 @@ const DropDown: React.FC<DropDownProps> = ({ oldCategoryLabel, oldCategoryValue,
   // ];
 
   return (
-    <View className="bg-cardBg rounded-[10px]  mt-[10px] ">
+    <View className="bg-cardBg rounded-[10px]  mt-[10px] mb-[10px] ">
       {/* {renderLabel()} */}
       <Dropdown
         style={[

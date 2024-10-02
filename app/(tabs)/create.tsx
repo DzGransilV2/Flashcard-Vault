@@ -108,14 +108,13 @@ const Create = () => {
   }
 
   return (
-    <SafeAreaView className='h-full bg-primary'>
-      <ScrollView className='h-full mx-[40px] gap-y-[5px]'>
+    <SafeAreaView className='h-full bg-primary border'>
+      <ScrollView className='h-full mx-[40px] gap-y-[5px]' showsVerticalScrollIndicator={false}>
         <View>
           <Text className='text-textColor mt-[30px] text-xl font-semibold'>Create Card</Text>
         </View>
-        <View className='gap-y-5 h-[696px]'>
-          {/* This scroll view extra to escape from tab lol */}
-          <ScrollView className='gap-y-5'>
+        <View className=''>
+          <View className='gap-y-5'>
             <View>
               <FormField
                 fieldHeading="Question"
@@ -163,7 +162,7 @@ const Create = () => {
                       />
                     </View>
                     <View>
-                      <Text className='text-textColor font-medium text-base mb-[10px]'>Category image</Text>
+                      <Text className='text-textColor font-medium text-base'>Category image</Text>
                       <ImagePickerCard setImageVerify={verifyImage} />
                     </View>
                   </View>
@@ -175,14 +174,14 @@ const Create = () => {
                   <CustomBtn
                     title="Create"
                     handlePress={submit}
-                    containerStyle="w-[130px] h-[50px]"
+                    containerStyle="w-[130px] h-[50px] mb-5"
                     textStyles='text-xl'
                     isLoading={isSubmitting}
                   />
                 </View>
               )
             }
-          </ScrollView>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>

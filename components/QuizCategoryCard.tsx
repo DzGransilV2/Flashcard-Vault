@@ -22,7 +22,7 @@ const QuizCategoryCard: React.FC<QuizCategoryCardProps> = ({ category_name, cate
     }
 
     return (
-        <TouchableOpacity onPress={handleRedirectToQuiz} activeOpacity={0.7} className='bg-cardBg h-[70px] mb-5 w-full px-5 flex flex-row items-center justify-center border-[1px] border-secondary rounded-[10px]'>
+        <TouchableOpacity onPress={handleRedirectToQuiz} activeOpacity={0.7} className='bg-cardBg h-[70px] mb-5 w-full px-5 flex flex-row items-center justify-center border border-secondary rounded-[10px]'>
             <View>
                 <Image
                     source={{ uri: category_image }}
