@@ -69,7 +69,7 @@ const Edit = () => {
   return (
     <SafeAreaView className="h-full bg-primary">
       <View className="h-full mx-[40px]">
-        <View className="mt-10">
+        <View className='mt-10 items-center justify-center'>
           {/* Search component */}
           <SearchComponent query={query} setQuery={setQuery} />
         </View>

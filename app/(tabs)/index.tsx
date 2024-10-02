@@ -70,7 +70,7 @@ const Home = () => {
     <>
       <SafeAreaView className='h-[calc(100%-84px)] bg-primary'>
         <View className='h-full mx-[40px]'>
-          <View className='mt-10'>
+          <View className='mt-10 items-center justify-center'>
             <SearchComponent query={query} setQuery={setQuery} />
           </View>
           <View className='flex flex-col flex-grow'>
