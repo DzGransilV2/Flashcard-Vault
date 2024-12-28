@@ -1,50 +1,56 @@
-# Welcome to your Expo app 👋
+# Flashcards Vault - Language Learning App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+The **Flashcards Vault App** offers an interactive and personalized way for users to enhance their learning experience by creating and studying flashcards. It is designed to help users efficiently memorize new vocabulary, concepts, or facts through repetition and active recall.
 
-## Get started
+## 🌟 Features
 
-1. Install dependencies
+### 1. **Custom Flashcards & Categories**
+- Users can create personalized flashcards with custom names and images.
+- Flashcards can be grouped into custom categories for better organization.
 
-   ```bash
-   npm install
-   ```
+### 2. **Card Learning Modes**
+- Multiple learning modes are available to help users learn flashcards effectively.
+- Modes include **Study Mode** and **Quiz Mode** to test and reinforce vocabulary.
 
-2. Start the app
+### 3. **Progress Tracking**
+- The app tracks the user's learning progress, showing how many flashcards they've learned or reviewed.
 
-   ```bash
-    npx expo start
-   ```
+### 4. **Search Function**
+- A search function to quickly find specific flashcards or categories.
 
-In the output, you'll find options to open the app in a
+### 5. **Flashcard Management**
+- Users can edit, delete, and reassign flashcards to different categories for easy management.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### 6. **Quizzes**
+- The app includes quizzes based on user-created flashcards to test knowledge.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## 🛠️ Technologies Used
 
-When you're ready, run:
+1. **Expo React Native**: Framework for building cross-platform mobile applications.
+2. **TypeScript**: For type safety and enhancing development efficiency.
+3. **Firebase**:
+   - **Authentication**: Secure user sign-up, login, and profile management.
+   - **Firestore**: NoSQL database for storing flashcards, categories, and user data.
+4. **NativeWind**: Utility-first CSS framework for responsive and modern UI design.
 
-```bash
-npm run reset-project
-```
+---
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 📱 User Experience
 
-## Learn more
+- **Seamless UI**: NativeWind ensures a responsive and modern design for an engaging user experience.
+- **User-Friendly Navigation**: Users can easily switch between learning modes, manage flashcards, and track their progress.
 
-To learn more about developing your project with Expo, look at the following resources:
+---
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## 🚀 Project Link
 
-## Join the community
+[![Visit Project](https://img.shields.io/badge/Visit-Project-green?style=for-the-badge)](https://github.com/DzGransilV2/Flashcard-Vault)
 
-Join our community of developers creating universal apps.
+---
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+### End
+
+---
